@@ -1,37 +1,13 @@
-## Welcome to GitHub Pages
+## Hunters Guide
 
-You can use the [editor on GitHub](https://github.com/NitsujCodes/hunters-guide/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+The aim for this project is to provide an organised way to investigate ghosts in the game Phasmophobia. It will teach you the basic process that you should follow to be an efficient ghost hunter, along with useful tactics to help eliminate some evidence/ghosts for when the ghost is proving to be quite hesitant in giving away its identity.
+There is also an items section that will give a brief description as to how the item works and tips on how to use that item.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+This page is responsive and should fit nicely on most small tablets/smartphones.
 
-### Markdown
+### UI
+Click the evidence buttons to select the evidence as being "discovered" and the ghost list will filter out any ghosts that do not have that evidence.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+If you are 100% sure that you won't get a certain type of evidence then you can simply click the lock icon on the evidence button, this will filter out any ghosts that have that evidence.
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/NitsujCodes/hunters-guide/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+To start a new investigation you can just click the red reset button at the top right.
