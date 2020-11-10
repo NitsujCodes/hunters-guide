@@ -2,50 +2,54 @@ import Evidence from './evidence.obj.js';
 import Ghost from './ghost.obj.js';
 import Tactic from './tactic.obj.js';
 
-export default class Core
-{
-    static ghostIndex = new Map();
-    static evidenceIndex = new Map();
-    static tacticIndex = new Map();
+export default class Core {
+    static #ghostIndex = new Map();
+    static #evidenceIndex = new Map();
+    static #tacticIndex = new Map();
 
-    static evidenceTree = new Map();
+    static #evidenceTree = new Map();
 
-    static evidenceSelected = [];
-    static evidenceEliminated = [];
-    static ghostsEliminated = [];
-    static evidenceAutoEliminated = [];
+    static #evidenceSelected = [];
+    static #evidenceEliminated = [];
+    static #ghostsEliminated = [];
+    static #evidenceAutoEliminated = [];
 
-    static currentEvidenceTreePosition = {};
+    static #currentEvidenceTreePosition = {};
 
-    constructor() {}
+    static #maxEvidence = 3;
 
-    static init()
-    {
+    constructor() {
+    }
+
+    static init() {
         this.#buildEvidenceTree();
     }
 
-    static #buildEvidenceTree()
+    static get maxEvidence()
     {
-        this.evidenceTree = new Map();
+        return this.#maxEvidence;
+    }
 
-        for (const [ghostKey, ghostData] of this.ghostIndex.entries()) {
-            for (const evidenceKey of ghostData.evidence) {
-                if (!this.evidenceTree.has(evidenceKey)) {
-                    this.evidenceTree.set(evidenceKey, {
+    static #buildEvidenceTree() {
+        this.#evidenceTree = new Map();
+
+        for (const [ghostKey, ghost] of this.allGhosts().entries()) {
+            for (const evidenceKey of ghost.evidence) {
+                if (!this.#evidenceTree.has(evidenceKey)) {
+                    this.#evidenceTree.set(evidenceKey, {
                         ghosts: new Map(),
                         nextEvidence: new Map()
                     });
                 }
-                this.evidenceTree.get(evidenceKey).ghosts.set(ghostKey, ghostData);
-                let newEvidenceList = [].concat(ghostData.evidence);
+                this.#evidenceTree.get(evidenceKey).ghosts.set(ghostKey, ghost);
+                let newEvidenceList = [].concat(ghost.evidence);
                 newEvidenceList.splice(newEvidenceList.indexOf(evidenceKey), 1);
-                this.#setEvidenceData(this.evidenceTree.get(evidenceKey).nextEvidence, newEvidenceList, ghostKey);
+                this.#setEvidenceData(this.#evidenceTree.get(evidenceKey).nextEvidence, newEvidenceList, ghostKey);
             }
         }
     }
 
-    static #setEvidenceData(currentEvidenceTreePointer, evidenceList, ghostKey)
-    {
+    static #setEvidenceData(currentEvidenceTreePointer, evidenceList, ghostKey) {
         if (!evidenceList.length) {
             return;
         }
@@ -57,7 +61,7 @@ export default class Core
                     nextEvidence: new Map()
                 });
             }
-            currentEvidenceTreePointer.get(evidenceList[i]).ghosts.set(ghostKey, this.getGhost(ghostKey));
+            currentEvidenceTreePointer.get(evidenceList[i]).ghosts.set(ghostKey, this.ghost(ghostKey));
 
             let newEvidenceList = [].concat(evidenceList);
             let currentEvidence = newEvidenceList.splice(i, 1);
@@ -65,9 +69,8 @@ export default class Core
         }
     }
 
-    static addGhost(ghostKey, ghostData)
-    {
-        this.ghostIndex.set(ghostKey, new Ghost(ghostKey, ghostData));
+    static addGhost(ghostKey, ghostData) {
+        this.#ghostIndex.set(ghostKey, new Ghost(ghostKey, ghostData));
 
         let ghostStatusProps = {
             isPossibleByEvidence: true,
@@ -82,25 +85,42 @@ export default class Core
             ghostStatusProps.possibleEvidence[ghostData.evidence[i]] = true;
         }
 
-        this.ghostIndex.get(ghostKey).setProp(ghostStatusProps);
+        this.ghost(ghostKey).setProp(ghostStatusProps);
+        this.ghost(ghostKey)
+            .addIsCheck('possible', function () {
+                let eliminated = false;
+                let ghostEliminatedEvidence = this.prop('eliminated');
+
+                for (let evidence in ghostEliminatedEvidence) {
+                    if (ghostEliminatedEvidence.hasOwnProperty(evidence)) {
+                        if (ghostEliminatedEvidence[evidence]) {
+                            eliminated = true;
+                            break;
+                        }
+                    }
+                }
+
+                return (
+                    this.prop('isPossibleByEvidence') &&
+                    !eliminated
+                );
+            });
 
         return this;
     }
 
-    static getGhost(ghostKey)
-    {
-        return this.ghostIndex.get(ghostKey);
+    static ghost(ghostKey) {
+        return this.#ghostIndex.get(ghostKey);
     }
 
-    static getAllGhosts(ghostKey)
+    static allGhosts()
     {
-        return this.ghostIndex;
+        return this.#ghostIndex;
     }
 
-    static addEvidence(evidenceKey, evidenceData)
-    {
-        this.evidenceIndex.set(evidenceKey, new Evidence(evidenceKey, evidenceData));
-        this.evidenceIndex.get(evidenceKey).setProp({
+    static addEvidence(evidenceKey, evidenceData) {
+        this.#evidenceIndex.set(evidenceKey, new Evidence(evidenceKey, evidenceData));
+        this.#evidenceIndex.get(evidenceKey).setProp({
             isSelected: false,
             isEliminated: false
         });
@@ -108,43 +128,111 @@ export default class Core
         return this;
     }
 
-    static getEvidence(evidenceKey)
-    {
-        return this.evidenceIndex.get(evidenceKey);
+    static evidence(evidenceKey) {
+        return this.#evidenceIndex.get(evidenceKey);
     }
 
-    static addTactic(tacticKey, tacticData)
-    {
-        this.tacticIndex.set(tacticKey, new Tactic(tacticKey, tacticData));
+    static allEvidence() {
+        return this.#evidenceIndex;
+    }
+
+    static addTactic(tacticKey, tacticData) {
+        this.#tacticIndex.set(tacticKey, new Tactic(tacticKey, tacticData));
 
         return this;
     }
 
-    static getTactic(tacticKey)
-    {
-        return this.tacticIndex.get(tacticKey);
+    static tactic(tacticKey) {
+        return this.#tacticIndex.get(tacticKey);
     }
 
-    static debug()
+    static allTactics()
     {
+        return this.#tacticIndex;
+    }
+
+    static evidenceSelected(evidenceKey, value)
+    {
+        if (typeof evidenceKey === 'undefined') {
+            return this.#evidenceSelected;
+        } else if (typeof value === 'undefined') {
+            return this.#evidenceSelected[evidenceKey];
+        } else {
+            this.#evidenceSelected[evidenceKey] = value;
+            return this;
+        }
+    }
+
+    static evidenceEliminated(evidenceKey, value)
+    {
+        if (typeof evidenceKey === 'undefined') {
+            return this.#evidenceEliminated;
+        } else if (typeof value === 'undefined') {
+            return this.#evidenceEliminated[evidenceKey];
+        } else {
+            this.#evidenceEliminated[evidenceKey] = value;
+            return this;
+        }
+    }
+
+    static ghostsEliminated(evidenceKey, value)
+    {
+        if (typeof evidenceKey === 'undefined') {
+            return this.#ghostsEliminated;
+        } else if (typeof value === 'undefined') {
+            return this.#ghostsEliminated[evidenceKey];
+        } else {
+            this.#ghostsEliminated[evidenceKey] = value;
+            return this;
+        }
+    }
+
+    static evidenceAutoEliminated(evidenceKey, value)
+    {
+        if (typeof evidenceKey === 'undefined') {
+            return this.#evidenceAutoEliminated;
+        } else if (typeof value === 'undefined') {
+            return this.#evidenceAutoEliminated[evidenceKey];
+        } else {
+            this.#evidenceAutoEliminated[evidenceKey] = value;
+            return this;
+        }
+    }
+
+    static get currentTree()
+    {
+        return this.#currentEvidenceTreePosition;
+    }
+
+    static set currentTree(newTreePointer)
+    {
+        this.#currentEvidenceTreePosition = newTreePointer;
+    }
+
+    static get tree()
+    {
+        return this.#evidenceTree;
+    }
+
+    static debug() {
         console.warn('Displaying Debug Data');
         console.warn('--Evidence Index');
-        console.log(this.evidenceIndex);
+        console.log(this.allEvidence());
         console.warn('--Ghost Index');
-        console.log(this.ghostIndex);
+        console.log(this.allGhosts());
         console.warn('--Tactic Index');
-        console.log(this.tacticIndex);
+        console.log(this.allTactics());
         console.warn('--Evidence Tree');
-        console.log(this.evidenceTree);
+        console.log(this.tree);
         console.warn('--Evidence Selected');
-        console.log(this.evidenceSelected);
+        console.log(this.evidenceSelected());
         console.warn('--Current Evidence Tree Position');
-        console.log(this.currentEvidenceTreePosition);
+        console.log(this.currentTree);
         console.warn('--Evidence Eliminated');
-        console.log(this.evidenceEliminated);
+        console.log(this.evidenceEliminated());
         console.warn('--Ghosts Eliminated');
-        console.log(this.ghostsEliminated);
+        console.log(this.ghostsEliminated());
         console.warn('--Auto Eliminated Evidence');
-        console.log(this.evidenceAutoEliminated);
+        console.log(this.evidenceAutoEliminated());
     }
 }

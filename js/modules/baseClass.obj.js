@@ -1,12 +1,14 @@
 export default class baseClass
 {
     #customProps;
+    #isChecks;
 
     constructor() {
         this.#customProps = new Map();
+        this.#isChecks = new Map();
     };
 
-    getProp(customProp)
+    prop(customProp)
     {
         return this.#customProps.get(customProp);
     }
@@ -24,5 +26,17 @@ export default class baseClass
         }
 
         return this;
+    }
+
+    addIsCheck(key, callable)
+    {
+        this.#isChecks.set(key, callable);
+
+        return this;
+    }
+
+    is(check, ...callableArgs)
+    {
+        return (this.#isChecks.get(check).call(this, callableArgs));
     }
 }
