@@ -350,9 +350,10 @@ $(function () {
 
     function loadEvidence() {
         $evidenceSection.find('button').remove();
-        let $buttonContainer = $('<div class="col-md-6 col-sm-6"></div>');
+        let $buttonContainer = $('<div class="col-md-6 col-sm-6 evidence-outer-col"></div>');
         let $buttonTemplate = $('<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>');
         let $newButton, $newContainer;
+        let $newButtonSubContainer;
 
         evidenceStatus = {};
 
@@ -361,12 +362,15 @@ $(function () {
                 $newButton = $buttonTemplate.clone();
                 $newContainer = $buttonContainer.clone();
 
-                $newButton.append('<span class="badge ' + evidenceIndex[key].badgeClass + ' float-left evidence-icon sub-container"><i class="' + evidenceIndex[key].iconClass + '"></i></span>');
+                $newButtonSubContainer = $('<div class="row evidence-row"></div>');
+                $newButton.append($newButtonSubContainer);
+
+                $newButtonSubContainer.append('<div class="col-sm-2 evidence-col-1"><span class="badge ' + evidenceIndex[key].badgeClass + ' evidence-icon"><i class="' + evidenceIndex[key].iconClass + '"></i></span></div>');
 
                 $newButton
-                    .attr('data-evidence', key)
-                    .append('<span class="sub-container evidence-name">' + evidenceIndex[key].name + '</span>');
-                $newButton.append('<span id="evidenceEliminateButton" class="float-right sub-container eliminate-lock"><i class="fa fa-unlock eliminate-icon"></i></span>');
+                    .attr('data-evidence', key);
+                $newButtonSubContainer.append('<div class="col-sm-8 evidence-name evidence-col-2">' + evidenceIndex[key].name + '</div>');
+                $newButtonSubContainer.append('<div class="col-sm-2 eliminate-lock evidence-col-3"><i class="fa fa-unlock eliminate-icon"></i></div>');
                 $newContainer.append($newButton);
 
                 $evidenceSection.append($newContainer);
