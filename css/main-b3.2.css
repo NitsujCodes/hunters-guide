@@ -76,6 +76,10 @@ html {
     padding: 5px;
 }
 
+#evidencePossible .badge {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+}
+
 #evidencePossibleContainer.alert-dark {
     background-color: #444a50;
     color: #ccc;
@@ -89,6 +93,12 @@ html {
 .eliminate-icon {
     font-size: 11pt;
     color: #dc3545;
+}
+
+.eliminate-icon path {
+    stroke: black;
+    stroke-opacity: 50%;
+    stroke-width: 8px;
 }
 
 .evidence-outer-col {
@@ -121,6 +131,7 @@ html {
 
 .btn-evidence .evidence-col-1 .badge {
     margin-top: 14px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
 }
 
 .btn-evidence .evidence-col-2 {
@@ -146,6 +157,10 @@ html {
 
 #ghostList .card .card-header .ghostEvidence {
     margin-top: 5px;
+}
+
+#ghostList .card .card-header .ghostEvidence .badge {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
 }
 
 #ghostList .card .card-header .ghost-header-left {
@@ -239,7 +254,7 @@ html {
     }
 
     #ghostList .card .card-body {
-        font-size: 20px;
+        font-size: 26px;
     }
 
     #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
@@ -252,8 +267,9 @@ html {
     }
 
     #ghostList .card .card-header .ghostEvidence {
-        padding-top: 10px;
+        padding-top: 0;
         margin-top: 0;
+        font-size: 40px;
     }
 }
 
@@ -312,7 +328,7 @@ html {
     }
 
     #ghostList .card .card-body {
-        font-size: 20px;
+        font-size: 26px;
     }
 
     #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
@@ -325,7 +341,8 @@ html {
     }
 
     #ghostList .card .card-header .ghostEvidence {
-        padding-top: 10px;
+        padding-top: 0;
         margin-top: 0;
+        font-size: 40px;
     }
 }
