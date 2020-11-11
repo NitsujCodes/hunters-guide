@@ -8,6 +8,18 @@ let maxEvidence = 3;
 let debug;
 
 $(function () {
+    let core = (function() {
+
+        this.ghostStatus = {};
+        this.evidenceStatus = {}
+
+        this.init = function() {
+
+        };
+
+        return this;
+    })();
+
     let $evidenceSection = $('#evidence');
     let $ghostsSection = $('#ghosts');
     let $ghostList = $ghostsSection.find('#ghostList');
@@ -28,10 +40,10 @@ $(function () {
     /**
      * Initialises Data Loading
      */
-    function init(rebuild) {
+    function init(rebuildTree) {
         //Process ghost list
         ghostStatus = {};
-        evidenceSelected = [];
+        evidenceStatus = {};
         evidenceSelected = [];
         evidenceEliminated = [];
         ghostsEliminated = [];
@@ -39,32 +51,38 @@ $(function () {
 
         currentEvidenceTreePosition = evidenceTree;
 
-        rebuild = (typeof rebuild === 'undefined') ? true : rebuild;
+        loadGhosts(((typeof rebuildTree === 'undefined') ? true : rebuildTree));
 
-        if (rebuild) {
+        //Load UI
+        loadEvidence();
+        renderGhosts();
+    }
+
+    function loadGhosts(rebuildTree) {
+        if (rebuildTree) {
             evidenceTree = {};
         }
 
         for (let ghostKey in ghostIndex) {
             if (ghostIndex.hasOwnProperty(ghostKey)) {
-                if (rebuild) {
+                if (rebuildTree) {
                     setEvidenceData(evidenceTree, ghostIndex[ghostKey].evidence, ghostKey);
                 }
 
                 ghostStatus[ghostKey] = {
-                    possibleEvidence: true,
-                    eliminated: {}
+                    isPossibleByEvidence: true,
+                    isEliminatedByEvidence: false,
+                    possibleEvidence: {},
+                    eliminated: {},
+                    isForceEliminated: false
                 };
 
                 for (let i = 0; i < ghostIndex[ghostKey].evidence.length; i++) {
                     ghostStatus[ghostKey].eliminated[ghostIndex[ghostKey].evidence[i]] = false;
+                    ghostStatus[ghostKey].possibleEvidence[ghostIndex[ghostKey].evidence[i]] = true;
                 }
             }
         }
-
-        //Load UI
-        loadEvidence();
-        renderGhosts();
     }
 
     /**
@@ -167,16 +185,15 @@ $(function () {
         }
 
         refreshGhostStatus();
+        debug();
         renderGhosts();
     }
 
     function deselectEvidence($button) {
-        if (evidenceSelected.length === maxEvidence) {
-            for (let i = 0; i < evidenceAutoEliminated.length; i++) {
-                unEliminateEvidenceByName(evidenceAutoEliminated[i], true);
-            }
-            evidenceAutoEliminated = [];
+        for (let i = 0; i < evidenceAutoEliminated.length; i++) {
+            unEliminateEvidenceByName(evidenceAutoEliminated[i], true);
         }
+        evidenceAutoEliminated = [];
 
         $button.removeClass(btnEvidenceSelectedClass).addClass(btnEvidenceClass);
 
@@ -304,7 +321,7 @@ $(function () {
         }
 
         return (
-            ghostStatus[ghostKey].possibleEvidence &&
+            ghostStatus[ghostKey].isPossibleByEvidence &&
             !eliminated
         );
     }
@@ -335,15 +352,50 @@ $(function () {
         return ghostStatus[ghostKey].eliminated[evidence];
     }
 
+    function canEvidenceBeUnEliminated(evidence) {
+        let $evidence = $evidenceSection.find('.btn-evidence[data-evidence="' + evidence + '"]').first();
+        return $evidence.data('can-undo');
+    }
+
     function isGhostEliminated(ghostKey) {
         //TODO: add this when adding the ghost elimination feature
     }
 
     function refreshGhostStatus() {
+        let currentEvidencePointer = (typeof currentEvidenceTreePosition.nextEvidence === 'undefined') ?
+        currentEvidenceTreePosition : currentEvidenceTreePosition.nextEvidence;
+
+        let selectedEvidence = {};
+        for (let evidence of evidenceSelected) {
+            selectedEvidence[evidence] = '';
+        }
+
         for (let ghostKey in ghostStatus) {
+            let evidenceIsSelected = 0;
+
             if (ghostStatus.hasOwnProperty(ghostKey)) {
-                ghostStatus[ghostKey].possibleEvidence = (typeof currentEvidenceTreePosition.ghosts !== 'undefined') ?
-                    (typeof currentEvidenceTreePosition.ghosts[ghostKey] !== 'undefined') : true;
+                ghostStatus[ghostKey].isPossibleByEvidence = true;
+
+                for (let evidence in ghostStatus[ghostKey].possibleEvidence) {
+                    if (ghostStatus[ghostKey].possibleEvidence.hasOwnProperty(evidence)) {
+                        if (typeof selectedEvidence[evidence] !== 'undefined') {
+                            evidenceIsSelected++;
+                            ghostStatus[ghostKey].possibleEvidence[evidence] = true;
+                        } else if (typeof currentEvidencePointer[evidence] === 'undefined') {
+                            ghostStatus[ghostKey].possibleEvidence[evidence] = false;
+                        } else {
+                            ghostStatus[ghostKey].possibleEvidence[evidence] = true;
+                        }
+
+                        if (!ghostStatus[ghostKey].possibleEvidence[evidence]) {
+                            ghostStatus[ghostKey].isPossibleByEvidence = false;
+                        }
+                    }
+                }
+
+                if (ghostStatus[ghostKey].isPossibleByEvidence && evidenceIsSelected !== evidenceSelected.length) {
+                    ghostStatus[ghostKey].isPossibleByEvidence = false;
+                }
             }
         }
     }
@@ -371,7 +423,10 @@ $(function () {
 
                 $evidenceSection.append($newContainer);
 
-                evidenceStatus[key] = 0;
+                evidenceStatus[key] = {
+                    isSelected: false,
+                    isEliminated: false
+                };
             }
         }
     }
@@ -381,6 +436,9 @@ $(function () {
         let $listItemTemplate = $('<li class="list-group-item list-group-item-dark"><span id="ghostName"></span><span id="ghostEvidence"></span></li>');
         let $listItem;
         let evidenceSelectedUnique = {};
+        let currentEvidencePointer = (typeof currentEvidenceTreePosition.nextEvidence === 'undefined') ?
+            currentEvidenceTreePosition : currentEvidenceTreePosition.nextEvidence;
+        let evidenceToEliminate = [];
 
         $ghostList.find('li').remove();
 
@@ -389,7 +447,8 @@ $(function () {
                 evidenceSelectedUnique[evidence] = '';
             }
 
-            ghostList = currentEvidenceTreePosition.ghosts;
+            //ghostList = currentEvidenceTreePosition.ghosts;
+            ghostList = ghostStatus;
         } else {
             ghostList = ghostStatus;
         }
@@ -397,8 +456,9 @@ $(function () {
         let evidencePossible = {};
 
         for (let ghostKey in ghostList) {
+            let ghostData = ghostIndex[ghostKey];
+
             if (ghostIsPossible(ghostKey)) {
-                let ghostData = ghostIndex[ghostKey];
                 let evidenceData, $ghostEvidence;
 
                 $listItem = $listItemTemplate.clone();
@@ -421,6 +481,18 @@ $(function () {
                     }
                 }
                 $ghostList.append($listItem);
+            } else {
+                for (let i = 0; i < ghostData.evidence.length; i++) {
+                    if (
+                        typeof currentEvidencePointer[ghostData.evidence[i]] === 'undefined' &&
+                        typeof evidenceSelectedUnique[ghostData.evidence[i]] === 'undefined'
+                    ) {
+                        if (!isEvidenceEliminated(ghostData.evidence[i])) {
+                            eliminateEvidenceByName(ghostData.evidence[i], false);
+                            evidenceAutoEliminated.push(ghostData.evidence[i]);
+                        }
+                    }
+                }
             }
         }
 
@@ -454,7 +526,7 @@ $(function () {
         .on('click', '#resetButton', function () {
             init(false);
         })
-        .on('click', '.eliminate-icon', function(e) {
+        .on('click', '.eliminate-icon', function (e) {
             e.stopPropagation();
             e.preventDefault();
 
