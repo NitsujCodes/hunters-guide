@@ -246,6 +246,11 @@ html {
         font-size: 30px;
     }
 
+    #ghostList .card .card-header {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
     #ghostList .card .card-header .ghostEvidence {
         padding-top: 10px;
         margin-top: 0;
@@ -312,6 +317,11 @@ html {
 
     #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
         font-size: 30px;
+    }
+
+    #ghostList .card .card-header {
+        padding-top: 15px;
+        padding-bottom: 15px;
     }
 
     #ghostList .card .card-header .ghostEvidence {
