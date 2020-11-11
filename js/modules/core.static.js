@@ -120,10 +120,19 @@ export default class Core {
 
     static addEvidence(evidenceKey, evidenceData) {
         this.#evidenceIndex.set(evidenceKey, new Evidence(evidenceKey, evidenceData));
-        this.#evidenceIndex.get(evidenceKey).setProp({
-            isSelected: false,
-            isEliminated: false
-        });
+        this.#evidenceIndex.get(evidenceKey)
+            .setProp({
+                isSelected: false,
+                isEliminated: false,
+                isPossible: true
+            })
+            .addPropAutoUpdate('isPossible', function() {
+                if (this.prop('isSelected') && !this.prop('isEliminated')) {
+                    this.setProp('isPossible', true);
+                }
+
+                return this;
+            });
 
         return this;
     }
@@ -159,6 +168,9 @@ export default class Core {
             return this.#evidenceSelected[evidenceKey];
         } else {
             this.#evidenceSelected[evidenceKey] = value;
+            this.evidence(evidenceKey)
+                .setProp('isSelected', value)
+                .autoUpdateProp('isPossible');
             return this;
         }
     }
@@ -171,6 +183,9 @@ export default class Core {
             return this.#evidenceEliminated[evidenceKey];
         } else {
             this.#evidenceEliminated[evidenceKey] = value;
+            this.evidence(evidenceKey)
+                .setProp('isEliminated', value)
+                .autoUpdateProp('isPossible');
             return this;
         }
     }
@@ -204,14 +219,29 @@ export default class Core {
         return this.#currentEvidenceTreePosition;
     }
 
-    static set currentTree(newTreePointer)
+    static updateCurrentTree()
     {
-        this.#currentEvidenceTreePosition = newTreePointer;
+        this.#currentEvidenceTreePosition = this.#evidenceTree;
+        for (let i = 0; i < this.#evidenceSelected.length; i++) {
+            if (typeof this.#currentEvidenceTreePosition.nextEvidence === 'undefined') {
+                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition[this.#evidenceSelected[i]];
+            } else {
+                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.nextEvidence[this.#evidenceSelected[i]];
+            }
+        }
+
+        return this;
     }
 
     static get tree()
     {
         return this.#evidenceTree;
+    }
+
+    static selectEvidence(evidenceKey)
+    {
+        this.evidenceSelected(evidenceKey, true);
+
     }
 
     static debug() {
