@@ -1,0 +1,372 @@
+body {
+    background-color: #333;
+    color: #ccc;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html {
+    touch-action: manipulation;
+}
+
+#main-content {
+    margin: 20px;
+}
+
+#resetButton {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.125);
+}
+
+#resetButton path {
+    stroke: black;
+    stroke-opacity: 50%;
+    stroke-width: 8px;
+}
+
+.btn {
+    color: #ccc;;
+}
+
+.btn-dark:not(:disabled):not(.disabled) {
+    background-color: #444a50;
+}
+
+.btn-dark:hover, .btn-dark:active, .btn-dark:focus {
+    background-color: #646a70;
+}
+
+#evidence {
+    margin-bottom: 5px;
+}
+
+.btn-xl {
+    font-size: 10pt;
+    height: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#menu {}
+
+#menu .btn-menu {
+    box-shadow: 1px 0 5px rgba(0,0,0,0.125);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+.btn-menu,#resetButton {
+    font-size: 10pt;
+}
+
+#ghosts {
+    font-size: 10pt;
+}
+
+#ghostEvidence {
+    float: right;
+}
+
+#ghostEvidence,#ghostEvidence .badge {
+    font-size: 10pt;
+}
+
+.btn-evidence {
+    width: 100%;
+    font-size: 11pt;
+    padding: 0;
+    height: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.125);
+}
+
+#evidencePossibleContainer {
+    margin-bottom: 10px;
+}
+
+#evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
+    font-size: 11pt;
+    padding: 5px;
+}
+
+#evidencePossibleContainer {
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.125);
+}
+
+#evidencePossible .badge {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+}
+
+#evidencePossibleContainer.alert-dark {
+    background-color: #444a50;
+    color: #ccc;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.evidence-icon {
+    font-size: 11pt;
+}
+
+.eliminate-icon {
+    font-size: 14pt;
+    color: #dc3545;
+}
+
+.eliminate-icon path {
+    stroke: black;
+    stroke-opacity: 50%;
+    stroke-width: 8px;
+}
+
+.evidence-outer-col {
+    margin-bottom: 10px;
+}
+
+.evidence-row {
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.btn-evidence .evidence-col-1 {
+    padding-left: 5px;
+    padding-right: 0;
+    padding-top: 0;
+}
+
+.btn-evidence .evidence-col-1 .badge {
+    margin-top: 14px;
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+}
+
+.btn-evidence .evidence-col-2 {
+    padding-top: 13px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+.btn-evidence .evidence-col-3 {
+    padding-top: 15px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#ghostList {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.125);
+}
+
+#ghostList .card {
+    color: #1b1e21;
+}
+
+#ghostList .card .card-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#ghostList .card .card-header .ghostEvidence {
+    margin-top: 5px;
+}
+
+#ghostList .card .card-header .ghostEvidence .badge {
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.4);
+}
+
+#ghostList .card .card-header .ghost-header-left {
+    padding-left: 0;
+}
+
+#ghostList .card .card-header .ghost-header-right {
+    padding-right: 5px;
+}
+
+#ghostList .card .card-header #ghostName {
+    width: 100%;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+#ghostList .card .card-header #ghostName:hover {
+    color: #ccc;
+    text-decoration: none;
+}
+
+#ghostList .card .card-header #ghostName:focus {
+    box-shadow: initial;
+    text-decoration: none;
+}
+
+#ghostList .bg-dark {
+    background-color: #444a50 !important;
+}
+
+#ghostList .card .card-body {
+    padding: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+#ghostList .card .card-body p {
+    margin-bottom: 0;
+}
+
+@media screen and (max-device-width: 768px) and (-webkit-device-pixel-ratio: 2) {
+    .btn-xl {
+        padding: 20px 30px;
+        font-size: 30px;
+        border-radius: 10px;
+    }
+
+    #ghosts {
+        font-size: 18pt;
+    }
+
+    #ghostEvidence,#ghostEvidence .badge {
+        font-size: 20pt;
+    }
+
+    .btn-menu,#resetButton {
+        font-size: 18pt;
+    }
+
+    #evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
+        font-size: 18pt;
+        padding: 5px;
+    }
+
+    #evidencePossibleContainer {
+        margin-bottom: 15px;
+        padding: 10px;
+    }
+
+    .evidence-icon {
+        font-size: 20pt;
+        margin-top: 10px;
+    }
+
+    .eliminate-icon {
+        font-size: 24pt;
+    }
+
+    .btn-evidence .evidence-col-3 {
+        padding-top: 17px;
+    }
+
+    .btn-evidence {
+        width: 100%;
+        font-size: 11pt;
+        padding: 0;
+        height: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    #evidence {
+        margin-bottom: 10px;
+    }
+
+    #menu {
+        margin-bottom: 10px;
+    }
+
+    #ghostList .card .card-body {
+        font-size: 26px;
+    }
+
+    #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
+        font-size: 30px;
+    }
+
+    #ghostList .card .card-header {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    #ghostList .card .card-header .ghostEvidence {
+        padding-top: 0;
+        margin-top: 0;
+        font-size: 40px;
+    }
+}
+
+@media screen and (max-device-width: 768px) {
+    .btn-xl {
+        padding: 10px 10px;
+        font-size: 25px;
+        border-radius: 10px;
+    }
+
+    #ghosts {
+        font-size: 18pt;
+    }
+
+    #ghostEvidence,#ghostEvidence .badge {
+        font-size: 20pt;
+    }
+
+    .btn-menu,#resetButton {
+        font-size: 18pt;
+    }
+
+    #evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
+        font-size: 18pt;
+        padding: 5px;
+    }
+
+    #evidencePossibleContainer {
+        margin-bottom: 15px;
+        padding: 10px;
+    }
+
+    .evidence-icon {
+        font-size: 20pt;
+        margin-top: 10px;
+    }
+
+    .eliminate-icon {
+        font-size: 24pt;
+    }
+
+    .btn-evidence .evidence-col-3 {
+        padding-top: 17px;
+    }
+
+    .btn-evidence {
+        width: 100%;
+        padding: 0;
+        height: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    #evidence {
+        margin-bottom: 10px;
+    }
+
+    #menu {
+        margin-bottom: 10px;
+    }
+
+    #ghostList .card .card-body {
+        font-size: 26px;
+    }
+
+    #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
+        font-size: 30px;
+    }
+
+    #ghostList .card .card-header {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+
+    #ghostList .card .card-header .ghostEvidence {
+        padding-top: 0;
+        margin-top: 0;
+        font-size: 40px;
+    }
+}
