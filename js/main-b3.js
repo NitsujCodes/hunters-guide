@@ -361,12 +361,12 @@ $(function () {
                 $newButton = $buttonTemplate.clone();
                 $newContainer = $buttonContainer.clone();
 
-                $newButton.append('<span class="badge ' + evidenceIndex[key].badgeClass + ' float-left evidence-icon"><i class="' + evidenceIndex[key].iconClass + '"></i></span>');
+                $newButton.append('<span class="badge ' + evidenceIndex[key].badgeClass + ' float-left evidence-icon sub-container"><i class="' + evidenceIndex[key].iconClass + '"></i></span>');
 
                 $newButton
                     .attr('data-evidence', key)
-                    .append(evidenceIndex[key].name);
-                $newButton.append('<i class="fa fa-unlock float-right eliminate-icon"></i>');
+                    .append('<span class="sub-container evidence-name">' + evidenceIndex[key].name + '</span>');
+                $newButton.append('<span id="evidenceEliminateButton" class="float-right sub-container eliminate-lock"><i class="fa fa-unlock eliminate-icon"></i></span>');
                 $newContainer.append($newButton);
 
                 $evidenceSection.append($newContainer);
@@ -454,11 +454,12 @@ $(function () {
         .on('click', '#resetButton', function () {
             init(false);
         })
-        .on('click', '.eliminate-icon', function(e) {
+        .on('click', '.eliminate-lock', function(e) {
             e.stopPropagation();
             e.preventDefault();
+            let $icon = $(this).find('.eliminate-icon').first();
 
-            if ($(this).hasClass(eliminateIcon)) {
+            if ($icon.hasClass(eliminateIcon)) {
                 eliminateEvidence($(this).closest('button'), true);
             } else {
                 unEliminateEvidence($(this).closest('button'));
