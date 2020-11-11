@@ -349,7 +349,7 @@ $(function () {
     }
 
     function loadEvidence() {
-        $evidenceSection.find('button').remove();
+        $evidenceSection.find('.evidence-outer-col').remove();
         let $buttonContainer = $('<div class="col-md-6 col-sm-6 evidence-outer-col"></div>');
         let $buttonTemplate = $('<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>');
         let $newButton, $newContainer;
@@ -382,11 +382,12 @@ $(function () {
 
     function renderGhosts() {
         let ghostList = [];
-        let $listItemTemplate = $('<li class="list-group-item list-group-item-dark"><span id="ghostName"></span><span id="ghostEvidence"></span></li>');
+        //let $listItemTemplate = $('<li class="list-group-item list-group-item-dark"><span id="ghostName"></span><span id="ghostEvidence"></span></li>');
+        let $listItemTemplate = $('<div class="card bg-dark"><div class="card-header"><h5 class="mb-0"><div class="row"><div class="col-sm-8 ghost-header-left"><button id="ghostName" class="btn btn-link collapsed" data-toggle="collapse" aria-expanded="true"></button></div><div class="col-sm-4 ghost-header-right"><span class="ghostEvidence float-right"></span></div></div></h5></div><div class="collapse" data-parent="#ghostList"><div class="card-body"></div></div></div>');
         let $listItem;
         let evidenceSelectedUnique = {};
 
-        $ghostList.find('li').remove();
+        $ghostList.find('div.card').remove();
 
         if (evidenceSelected.length) {
             for (let evidence of evidenceSelected) {
@@ -407,13 +408,23 @@ $(function () {
 
                 $listItem = $listItemTemplate.clone();
 
-                $listItem
-                    .attr('data-ghost', ghostKey)
+                $listItem.find('.card-header').first()
+                    .attr('id', 'card-heading-' + ghostKey)
                     .find('#ghostName')
-                    .html('<strong>' + ghostIndex[ghostKey].name + '</strong>');
+                    .attr('data-target', '#card-info-' + ghostKey)
+                    .attr('aria-controls', 'card-info-' + ghostKey)
+                    .text(ghostData.name);
+
+                $listItem.find('.collapse').first()
+                    .attr('id', 'card-info-' + ghostKey)
+                    .attr('aria-labelledby', '#card-heading-' + ghostKey)
+                    .find('.card-body').first()
+                    .append('<p class="card-text">' + ghostData.description + '</p>')
+                    .append('<p class="text-danger"><strong>' + ghostData.uniqueStrength + '</strong></p>')
+                    .append('<p class="text-success"><strong>' + ghostData.weakness + '</strong></p>');
 
                 if (evidenceSelected.length < maxEvidence) {
-                    $ghostEvidence = $listItem.find('#ghostEvidence');
+                    $ghostEvidence = $listItem.find('.ghostEvidence').first();
 
                     for (let i = 0; i < ghostData.evidence.length; i++) {
                         evidenceData = evidenceIndex[ghostData.evidence[i]];

@@ -1,6 +1,12 @@
 body {
     background-color: #333;
     color: #ccc;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 html {
@@ -61,10 +67,19 @@ html {
     margin-bottom: 5px;
 }
 
+#evidencePossibleContainer {
+    margin-bottom: 10px;
+}
+
 #evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
     font-size: 11pt;
     padding: 5px;
-    margin-bottom: 5px;
+}
+
+#evidencePossibleContainer.alert-dark {
+    background-color: #444a50;
+    color: #ccc;
+    border: 1px solid rgba(0,0,0,.125);
 }
 
 .evidence-icon {
@@ -120,6 +135,54 @@ html {
     padding-right: 0;
 }
 
+#ghostList .card {
+    color: #1b1e21;
+}
+
+#ghostList .card .card-header {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#ghostList .card .card-header .ghostEvidence {
+    margin-top: 5px;
+}
+
+#ghostList .card .card-header .ghost-header-left {
+    padding-left: 0;
+}
+
+#ghostList .card .card-header .ghost-header-right {
+    padding-right: 5px;
+}
+
+#ghostList .card .card-header #ghostName {
+    width: 100%;
+    text-align: left;
+}
+
+#ghostList .card .card-header #ghostName:hover {
+    color: #ccc;
+    text-decoration: none;
+}
+
+#ghostList .card .card-header #ghostName:focus {
+    box-shadow: initial;
+    text-decoration: none;
+}
+
+#ghostList .bg-dark {
+    background-color: #444a50 !important;
+}
+
+#ghostList .card .card-body {
+    padding: 10px;
+}
+
+#ghostList .card .card-body p {
+    margin-bottom: 0;
+}
+
 @media screen and (max-device-width: 768px) and (-webkit-device-pixel-ratio: 2) {
     .btn-xl {
         padding: 20px 30px;
@@ -142,7 +205,11 @@ html {
     #evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
         font-size: 18pt;
         padding: 5px;
-        margin-bottom: 5px;
+    }
+
+    #evidencePossibleContainer {
+        margin-bottom: 15px;
+        padding: 10px;
     }
 
     .evidence-icon {
@@ -164,11 +231,24 @@ html {
     }
 
     #evidence {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     #menu {
         margin-bottom: 10px;
+    }
+
+    #ghostList .card .card-body {
+        font-size: 20px;
+    }
+
+    #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
+        font-size: 30px;
+    }
+
+    #ghostList .card .card-header .ghostEvidence {
+        padding-top: 10px;
+        margin-top: 0;
     }
 }
 
@@ -194,7 +274,11 @@ html {
     #evidencePossibleContainer,#evidencePossible,#evidencePossible .badge {
         font-size: 18pt;
         padding: 5px;
-        margin-bottom: 5px;
+    }
+
+    #evidencePossibleContainer {
+        margin-bottom: 15px;
+        padding: 10px;
     }
 
     .evidence-icon {
@@ -215,10 +299,23 @@ html {
     }
 
     #evidence {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
 
     #menu {
         margin-bottom: 10px;
+    }
+
+    #ghostList .card .card-body {
+        font-size: 20px;
+    }
+
+    #ghostList .card .card-header #ghostName,#ghostList .card .card-header .ghostEvidence {
+        font-size: 30px;
+    }
+
+    #ghostList .card .card-header .ghostEvidence {
+        padding-top: 10px;
+        margin-top: 0;
     }
 }

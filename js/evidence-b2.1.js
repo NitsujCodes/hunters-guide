@@ -7,7 +7,7 @@ let evidenceIndex = {
     'spirit_box': {
         name: 'Spirit Box',
         badgeClass: 'badge-dark',
-        iconClass: 'fa fa-comment-dots'
+        iconClass: 'far fa-comment-dots'
     },
     'ghost_writing': {
         name: 'Ghost Writing',
