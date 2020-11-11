@@ -1,8 +1,8 @@
 let btnEvidenceClass = 'btn-dark';
 let btnEvidenceSelectedClass = 'btn-success';
 let btnEvidenceEliminatedClass = 'btn-outline-danger disabled';
-let eliminateIcon = 'fa-unlock';
-let unEliminateIcon = 'fa-lock';
+let eliminateIcon = 'fa fa-times-circle';
+let unEliminateIcon = 'far fa-times-circle';
 let maxEvidence = 3;
 
 let debug;
@@ -370,7 +370,7 @@ $(function () {
                 $newButton
                     .attr('data-evidence', key);
                 $newButtonSubContainer.append('<div class="col-sm-8 evidence-name evidence-col-2">' + evidenceIndex[key].name + '</div>');
-                $newButtonSubContainer.append('<div class="col-sm-2 eliminate-lock evidence-col-3"><i class="fa fa-unlock eliminate-icon"></i></div>');
+                $newButtonSubContainer.append('<div class="col-sm-2 eliminate-lock evidence-col-3"><i class="' + eliminateIcon + ' eliminate-icon"></i></div>');
                 $newContainer.append($newButton);
 
                 $evidenceSection.append($newContainer);
@@ -472,9 +472,10 @@ $(function () {
         .on('click', '.eliminate-lock', function(e) {
             e.stopPropagation();
             e.preventDefault();
-            let $icon = $(this).find('.eliminate-icon').first();
+            let $evidenceButton = $(this).closest('button');
+            let evidenceKey = $evidenceButton.data('evidence');
 
-            if ($icon.hasClass(eliminateIcon)) {
+            if (evidenceEliminated.indexOf(evidenceKey) === -1 && evidenceAutoEliminated.indexOf(evidenceKey) === -1) {
                 eliminateEvidence($(this).closest('button'), true);
             } else {
                 unEliminateEvidence($(this).closest('button'));

@@ -112,7 +112,7 @@ html {
 }
 
 .eliminate-icon {
-    font-size: 11pt;
+    font-size: 14pt;
     color: #dc3545;
 }
 
@@ -151,7 +151,7 @@ html {
 }
 
 .btn-evidence .evidence-col-3 {
-    padding-top: 13px;
+    padding-top: 15px;
     padding-left: 0;
     padding-right: 0;
 }
@@ -249,7 +249,11 @@ html {
     }
 
     .eliminate-icon {
-        font-size: 20pt;
+        font-size: 24pt;
+    }
+
+    .btn-evidence .evidence-col-3 {
+        padding-top: 17px;
     }
 
     .btn-evidence {
@@ -324,7 +328,11 @@ html {
     }
 
     .eliminate-icon {
-        font-size: 20pt;
+        font-size: 24pt;
+    }
+
+    .btn-evidence .evidence-col-3 {
+        padding-top: 17px;
     }
 
     .btn-evidence {
