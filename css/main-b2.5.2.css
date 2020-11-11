@@ -28,7 +28,7 @@ html {
 
 .btn-xl {
     font-size: 10pt;
-    padding: 10px 20px;
+    padding: 10px 10px;
 }
 
 #menu {
@@ -65,12 +65,26 @@ html {
 
 .evidence-icon {
     font-size: 11pt;
+    margin-top: 5px;
 }
 
 .eliminate-icon {
     font-size: 11pt;
-    margin-top: 2px;
     color: #dc3545;
+}
+
+.btn-evidence > .sub-container {
+    padding: 5px 5px;
+}
+
+.btn-evidence > .evidence-name {
+    position: relative;
+    top: 5px;
+}
+
+.btn-evidence > .eliminate-lock {
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 @media screen and (max-device-width: 768px) and (-webkit-device-pixel-ratio: 2) {
@@ -100,23 +114,22 @@ html {
 
     .evidence-icon {
         font-size: 20pt;
-        margin-top: 2px;
+        margin-top: 10px;
     }
 
     .eliminate-icon {
         font-size: 20pt;
-        margin-top: 10px;
     }
 
     .btn-evidence {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: 17px;
+        padding-right: 12px;
     }
 }
 
 @media screen and (max-device-width: 768px) {
     .btn-xl {
-        padding: 20px 30px;
+        padding: 10px 10px;
         font-size: 30px;
         border-radius: 10px;
     }
@@ -141,16 +154,15 @@ html {
 
     .evidence-icon {
         font-size: 20pt;
-        margin-top: 2px;
+        margin-top: 10px;
     }
 
     .eliminate-icon {
         font-size: 20pt;
-        margin-top: 10px;
     }
 
     .btn-evidence {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: 17px;
+        padding-right: 12px;
     }
 }
