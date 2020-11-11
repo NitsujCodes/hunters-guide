@@ -2,6 +2,7 @@ export default class baseClass
 {
     #customProps;
     #isChecks;
+    #customPropUpdaters;
 
     constructor() {
         this.#customProps = new Map();
@@ -26,6 +27,17 @@ export default class baseClass
         }
 
         return this;
+    }
+
+    addPropAutoUpdate(customProp, callable)
+    {
+        this.#customPropUpdaters.set(customProp, callable);
+    }
+
+    autoUpdateProp(customProp, ...propArgs)
+    {
+        propArgs.unshift(this.#customProps.get(customProp));
+        return this.#customPropUpdaters.get(customProp).call(this, propArgs);
     }
 
     addIsCheck(key, callable)
