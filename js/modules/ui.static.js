@@ -14,6 +14,9 @@ export default class UI {
     static init()
     {
         Config.set({
+            //UI Global Config Items
+            'ui.mainIcons.eliminate': 'fa fa-times-circle',
+            'ui.mainIcons.unEliminate': 'far fa-times-circle',
             //renderEvidence Config Items
             'ui.renderEvidence.buttonContainer': '<div class="col-md-6 col-sm-6 evidence-outer-col"></div>',
             'ui.renderEvidence.buttonTemplate': '<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>',
