@@ -7,6 +7,7 @@ export default class baseClass
     constructor() {
         this.#customProps = new Map();
         this.#isChecks = new Map();
+        this.#customPropUpdaters = new Map();
     };
 
     prop(customProp)
