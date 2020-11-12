@@ -8,6 +8,7 @@ Config.init({
 }, true);
 Core.init();
 UI.init();
+UI.render();
 
 //Binds
 $('body')
