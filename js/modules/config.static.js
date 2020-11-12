@@ -12,6 +12,16 @@ export default class Config
 
     static set(key, value, validator)
     {
+        if (typeof key === 'object' && typeof value === 'undefined') {
+            for (let actualKey in key) {
+                if (key.hasOwnProperty(actualKey)) {
+                    this.set(actualKey, key[actualKey]);
+                }
+            }
+
+            return this;
+        }
+
         if (this.#data.has(key) && this.#hasChildren.has(key) && !this.#structureLocked) {
             //The path exists and it has children
             this.#recursiveDelete(key);
