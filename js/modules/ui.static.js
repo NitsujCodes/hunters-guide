@@ -1,3 +1,5 @@
+import {replaceData} from './helpers.js';
+import Config from './config.static.js';
 import Core from './core.static.js';
 
 export default class UI {
@@ -11,27 +13,60 @@ export default class UI {
 
     static init()
     {
+        Config.set({
+            //renderEvidence Config Items
+            'ui.renderEvidence.buttonContainer': '<div class="col-md-6 col-sm-6 evidence-outer-col"></div>',
+            'ui.renderEvidence.buttonTemplate': '<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>',
+            'ui.renderEvidence.subContainerTemplate': '<div class="row evidence-row"></div>',
+            'ui.renderEvidence.evidenceCol1': '<div class="col-sm-2 evidence-col-1"><span class="badge !!badgeClass!! evidence-icon"><i class="!!iconClass!!"></i></span></div>',
+            'ui.renderEvidence.evidenceCol2': '<div class="col-sm-8 evidence-name evidence-col-2">!!name!!</div>',
+            'ui.renderEvidence.evidenceCol3': '<div class="col-sm-2 eliminate-lock evidence-col-3"><i class="!!eliminateIcon!! eliminate-icon"></i></div>',
+            //renderGhost Config Items
+            'ui.renderGhosts.listItemTemplate': '<div class="card bg-dark"><div class="card-header"><h5 class="mb-0"><div class="row"><div class="col-sm-8 ghost-header-left"><button id="ghostName" class="btn btn-link collapsed" data-toggle="collapse" aria-expanded="true"></button></div><div class="col-sm-4 ghost-header-right"><span class="ghostEvidence float-right"></span></div></div></h5></div><div class="collapse" data-parent="#ghostList"><div class="card-body"></div></div></div>',
+            'ui.renderGhosts.ghostDescription': '<p class="card-text">!!description!!</p>',
+            'ui.renderGhosts.ghostUniqueStrength': '<p class="text-danger"><strong>!!uniqueStrength!!</strong></p>',
+            'ui.renderGhosts.ghostWeakness': '<p class="text-success"><strong>!!weakness!!</strong></p>',
+            'ui.renderGhosts.evidence': '<span class="badge !!badgeClass!!"><i class="!!iconClass!!"></i></span>&nbsp;',
+            'ui.renderGhosts.evidencePossible.evidence': '<span class="badge !!badgeClass!!"><i class="!!iconClass!!"></i></span>&nbsp;'
+        });
+    }
+
+    static render()
+    {
         this.renderEvidence();
         this.renderGhosts();
     }
 
     static renderEvidence()
     {
-        this.$evidenceSection.find('button').remove();
-        let $buttonContainer = $('<div class="col-md-6 col-sm-6"></div>');
-        let $buttonTemplate = $('<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>');
-        let $newButton, $newContainer;
+        this.$evidenceSection.find('.evidence-outer-col').remove();
+        let $buttonContainer = $(Config.get('ui.renderEvidence.buttonContainer'));
+        let $buttonTemplate = $(Config.get('ui.renderEvidence.buttonTemplate'));
+        let $subContainerTemplate = $(Config.get('ui.renderEvidence.subContainerTemplate'));
+        let $newButton, $newContainer, $newButtonSubContainer;
+
+        let replacements = {
+            badgeClass: '',
+            iconClass: '',
+            name: '',
+            eliminateIcon: Config.get('ui.mainIcons.eliminate')
+        };
 
         for (let [evidenceKey, evidenceData] of Core.allEvidence().entries()) {
             $newButton = $buttonTemplate.clone();
             $newContainer = $buttonContainer.clone();
+            $newButtonSubContainer = $subContainerTemplate.clone();
 
-            $newButton.append('<span class="badge ' + evidenceData.badgeClass + ' float-left evidence-icon"><i class="' + evidenceData.iconClass + '"></i></span>');
+            replacements.badgeClass = evidenceData.badgeClass;
+            replacements.iconClass = evidenceData.iconClass;
+            replacements.name = evidenceData.name;
 
-            $newButton
-                .attr('data-evidence', evidenceKey)
-                .append(evidenceData.name);
-            $newButton.append('<i class="fa fa-unlock float-right eliminate-icon"></i>');
+            $newButton.append($newButtonSubContainer);
+            $newButtonSubContainer.append(replaceData(Config.get('ui.renderEvidence.evidenceCol1'), replacements));
+
+            $newButton.attr('data-evidence', evidenceKey);
+            $newButtonSubContainer.append(replaceData(Config.get('ui.renderEvidence.evidenceCol2'), replacements));
+            $newButtonSubContainer.append(replaceData(Config.get('ui.renderEvidence.evidenceCol3'), replacements));
             $newContainer.append($newButton);
 
             this.$evidenceSection.append($newContainer);
@@ -40,15 +75,13 @@ export default class UI {
 
     static renderGhosts()
     {
-        let ghostList = [];
-        let $listItemTemplate = $('<li class="list-group-item list-group-item-dark"><span id="ghostName"></span><span id="ghostEvidence"></span></li>');
+        let $listItemTemplate = $(Config.get('ui.renderGhosts.listItemTemplate'));
         let $listItem;
         let evidenceSelectedUnique = {};
         let currentEvidencePointer = (typeof Core.currentTree.nextEvidence === 'undefined') ?
             Core.currentTree : Core.currentTree.nextEvidence;
-        let evidenceToEliminate = [];
 
-        this.$ghostList.find('li').remove();
+        this.$ghostList.find('div.card').remove();
 
         if (Core.evidenceSelected().length) {
             for (let evidence of Core.evidenceSelected()) {
@@ -58,25 +91,50 @@ export default class UI {
 
         let evidencePossible = {};
 
+        let replacements = {
+            description: '',
+            uniqueStrength: '',
+            weakness: '',
+            badgeClass: '',
+            iconClass: ''
+        };
+
         for (let [ghostKey, ghost] of Core.allGhosts().entries()) {
             if (ghost.is('possible')) {
                 let evidenceData, $ghostEvidence;
 
                 $listItem = $listItemTemplate.clone();
 
-                $listItem
-                    .attr('data-ghost', ghostKey)
+                replacements.description = ghost.description;
+                replacements.uniqueStrength = ghost.uniqueStrength;
+                replacements.weakness = ghost.weakness;
+
+                $listItem.find('.card-header').first()
+                    .attr('id', 'card-heading-' + ghostKey)
                     .find('#ghostName')
-                    .html('<strong>' + ghost.name + '</strong>');
+                    .attr('data-target', '#card-info-' + ghostKey)
+                    .attr('aria-controls', 'card-info-' + ghostKey)
+                    .text(ghost.name);
+
+                $listItem.find('.collapse').first()
+                    .attr('id', 'card-info-' + ghostKey)
+                    .attr('aria-labelledby', '#card-heading-' + ghostKey)
+                    .find('.card-body').first()
+                    .append(replaceData(Config.get('ui.renderGhosts.ghostDescription'), replacements))
+                    .append(replaceData(Config.get('ui.renderGhosts.ghostUniqueStrength'), replacements))
+                    .append(replaceData(Config.get('ui.renderGhosts.ghostWeakness'), replacements));
 
                 if (Core.evidenceSelected().length < Core.maxEvidence) {
-                    $ghostEvidence = $listItem.find('#ghostEvidence');
+                    $ghostEvidence = $listItem.find('.ghostEvidence');
 
                     for (let i = 0; i < ghost.evidence.length; i++) {
                         evidenceData = Core.evidence(ghost.evidence[i]);
 
+                        replacements.badgeClass = evidenceData.badgeClass;
+                        replacements.iconClass = evidenceData.iconClass;
+
                         if (typeof evidenceSelectedUnique[ghost.evidence[i]] === 'undefined') {
-                            $ghostEvidence.append('<span class="badge ' + evidenceData.badgeClass + '"><i class="' + evidenceData.iconClass + '"></i></span>' + '&nbsp;');
+                            $ghostEvidence.append(replaceData(Config.get('ui.renderGhosts.evidence'), replacements));
                             evidencePossible[ghost.evidence[i]] = '';
                         }
                     }
@@ -92,7 +150,12 @@ export default class UI {
             for (let evidence of Object.keys(evidencePossible)) {
                 let evidenceData = Core.evidence(evidence);
 
-                this.$evidencePossible.append('<span class="badge ' + evidenceData.badgeClass + '"><i class="' + evidenceData.iconClass + '"></i></span>' + '&nbsp;');
+                replacements.badgeClass = evidenceData.badgeClass;
+                replacements.iconClass = evidenceData.iconClass;
+
+                this.$evidencePossible.append(
+                    replaceData(Config.get('ui.renderGhosts.evidencePossible.evidence'), replacements)
+                );
             }
         } else {
             this.$evidencePossible.html('All');
