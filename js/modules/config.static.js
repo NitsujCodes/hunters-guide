@@ -1,17 +1,14 @@
-export default class Config
-{
+export default class Config {
     static #data = new Map();
     static #hasChildren = new Set();
     static #structureLocked = false;
     static #validators = new Map();
 
-    static get(key)
-    {
+    static get(key) {
         return this.#data.get(key);
     }
 
-    static set(key, value, validator)
-    {
+    static set(key, value, validator) {
         if (typeof key === 'object' && typeof value === 'undefined') {
             for (let actualKey in key) {
                 if (key.hasOwnProperty(actualKey)) {
@@ -24,9 +21,11 @@ export default class Config
 
         if (this.#data.has(key) && this.#hasChildren.has(key) && !this.#structureLocked) {
             //The path exists and it has children
-            this.#recursiveDelete(key);
-            this.#hasChildren.delete(key);
-            this.#data.set(key, value);
+            if (this.#isValid(key, value)) {
+                this.#recursiveDelete(key);
+                this.#hasChildren.delete(key);
+                this.#data.set(key, value);
+            }
         } else if (!this.#data.has(key)) {
             this.#data.set(key, value);
             this.#pathSet(key);
@@ -35,20 +34,22 @@ export default class Config
             return this;
         }
 
-        if (typeof validator !== 'undefined') {
+        if (typeof validator !== 'undefined' && !this.#validators.has(key)) {
             this.#validators.set(key, validator);
         }
 
         return this;
     }
 
-    static has(key)
-    {
+    static has(key) {
         return this.#data.has(key);
     }
 
-    static #isValid(key, value)
-    {
+    static lockStructure() {
+        this.#structureLocked = true;
+    }
+
+    static #isValid(key, value) {
         if (!this.#data.has(key)) {
             return true;
         } else if (this.#validators.has(key)) {
@@ -59,8 +60,7 @@ export default class Config
         return true;
     }
 
-    static #pathSet(key)
-    {
+    static #pathSet(key) {
         let splitKey = key.split('.');
         let previousFullKey = key;
         let currentKey = splitKey.pop();
@@ -80,8 +80,7 @@ export default class Config
         }
     }
 
-    static #recursiveDelete(currentPathString)
-    {
+    static #recursiveDelete(currentPathString) {
         let pathString;
 
         for (const [nextKey, nextRef] of this.#data.get(currentPathString)) {
@@ -96,8 +95,7 @@ export default class Config
         }
     }
 
-    static debug()
-    {
+    static debug() {
         console.warn('[Config Debug]');
         console.warn('--Data');
         console.log(this.#data);
@@ -107,8 +105,7 @@ export default class Config
         console.log((this.#structureLocked) ? 'Structure is Locked' : 'Structure is not Locked');
     }
 
-    static init(defaults, lockStructure = false)
-    {
+    static load(defaults, lockStructure = false) {
         this.#structureLocked = lockStructure;
         for (let key in defaults) {
             if (defaults.hasOwnProperty(key)) {
