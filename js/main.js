@@ -2,12 +2,9 @@ import Config from './modules/config.static.js';
 import Core from './modules/core.static.js';
 import UI from './modules/ui.static.js';
 
-Config.init({
-    'ui.mainIcons.eliminate': 'fa fa-times-circle',
-    'ui.mainIcons.unEliminate': 'far fa-times-circle'
-}, true);
 Core.init();
 UI.init();
+Config.lockStructure();
 UI.render();
 
 //Binds
@@ -41,7 +38,7 @@ $('body')
         //renderGhosts();
     });
 
-console.log('Is Possible: ' + Core.ghost('banshee').is('possible'));
-
 Config.debug();
 Core.debug();
+
+console.log('Is Possible: ' + Core.ghost('banshee').is('possible'));
