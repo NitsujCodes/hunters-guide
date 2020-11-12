@@ -245,7 +245,7 @@ export default class Core {
     }
 
     static debug() {
-        console.warn('Displaying Debug Data');
+        console.warn('[Core Debug]');
         console.warn('--Evidence Index');
         console.log(this.allEvidence());
         console.warn('--Ghost Index');
