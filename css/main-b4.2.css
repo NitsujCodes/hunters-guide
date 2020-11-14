@@ -259,7 +259,7 @@ html {
     .btn-evidence {
         width: 100%;
         font-size: 11pt;
-        padding: 0;
+        padding: 10px;
         height: 100%;
         margin-top: 5px;
         margin-bottom: 5px;
@@ -337,7 +337,7 @@ html {
 
     .btn-evidence {
         width: 100%;
-        padding: 0;
+        padding: 10px;
         height: 100%;
         margin-top: 5px;
         margin-bottom: 5px;
