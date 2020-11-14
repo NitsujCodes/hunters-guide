@@ -33,6 +33,8 @@ export default class baseClass
     addPropAutoUpdate(customProp, callable)
     {
         this.#customPropUpdaters.set(customProp, callable);
+
+        return this;
     }
 
     autoUpdateProp(customProp, ...propArgs)

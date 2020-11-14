@@ -9,19 +9,20 @@ export default class Core {
 
     static #evidenceTree = new Map();
 
-    static #evidenceSelected = [];
-    static #evidenceEliminated = [];
-    static #ghostsEliminated = [];
-    static #evidenceAutoEliminated = [];
+    static #evidenceSelected = new Set();
+    static #evidenceEliminated = new Set();
+    static #ghostsEliminated = new Set();
+    static #evidenceAutoEliminated = new Set();
 
     static #currentEvidenceTreePosition = {};
 
     static #maxEvidence = 3;
+    static #debugMode = false;
 
-    constructor() {
-    }
+    constructor() {}
 
-    static init() {
+    static init(debugMode = false) {
+        this.#debugMode = debugMode;
         this.#buildEvidenceTree();
     }
 
@@ -34,15 +35,16 @@ export default class Core {
         this.#evidenceTree = new Map();
 
         for (const [ghostKey, ghost] of this.allGhosts().entries()) {
-            for (const evidenceKey of ghost.evidence) {
+            for (const [evidenceKey, evidence] of ghost.evidence) {
                 if (!this.#evidenceTree.has(evidenceKey)) {
                     this.#evidenceTree.set(evidenceKey, {
                         ghosts: new Map(),
                         nextEvidence: new Map()
                     });
                 }
+
                 this.#evidenceTree.get(evidenceKey).ghosts.set(ghostKey, ghost);
-                let newEvidenceList = [].concat(ghost.evidence);
+                let newEvidenceList = Array.from(ghost.evidence.keys());
                 newEvidenceList.splice(newEvidenceList.indexOf(evidenceKey), 1);
                 this.#setEvidenceData(this.#evidenceTree.get(evidenceKey).nextEvidence, newEvidenceList, ghostKey);
             }
@@ -70,40 +72,39 @@ export default class Core {
     }
 
     static addGhost(ghostKey, ghostData) {
-        this.#ghostIndex.set(ghostKey, new Ghost(ghostKey, ghostData));
-
         let ghostStatusProps = {
             isPossibleByEvidence: true,
-            isEliminatedByEvidence: false,
-            possibleEvidence: {},
-            eliminated: {},
-            isForceEliminated: false
+            isForceEliminated: false,
+            eliminatedByEvidence: new Set()
         };
 
-        for (let i = 0; i < ghostData.evidence.length; i++) {
-            ghostStatusProps.eliminated[ghostData.evidence[i]] = false;
-            ghostStatusProps.possibleEvidence[ghostData.evidence[i]] = true;
+        let ghostEvidenceList = ghostData.evidence;
+        ghostData.evidence = new Map();
+        for (let i = 0; i < ghostEvidenceList.length; i++) {
+            ghostData.evidence.set(ghostEvidenceList[i], this.evidence(ghostEvidenceList[i]));
         }
+        this.#ghostIndex.set(ghostKey, new Ghost(ghostKey, ghostData));
 
         this.ghost(ghostKey).setProp(ghostStatusProps);
         this.ghost(ghostKey)
             .addIsCheck('possible', function () {
-                let eliminated = false;
-                let ghostEliminatedEvidence = this.prop('eliminated');
-
-                for (let evidence in ghostEliminatedEvidence) {
-                    if (ghostEliminatedEvidence.hasOwnProperty(evidence)) {
-                        if (ghostEliminatedEvidence[evidence]) {
-                            eliminated = true;
-                            break;
-                        }
-                    }
+                return (this.prop('isPossibleByEvidence') && !this.prop('isForceEliminated'));
+            })
+            .addPropAutoUpdate('isPossibleByEvidence', function() {
+                if (this.prop('eliminatedByEvidence').size) {
+                    console.log('hasEliminated' + this.name);
+                    this.setProp('isPossibleByEvidence', false);
+                    return;
+                } else if (!this.prop('isPossibleByEvidence')) {
+                    this.setProp('isPossibleByEvidence', true);
                 }
 
-                return (
-                    this.prop('isPossibleByEvidence') &&
-                    !eliminated
-                );
+                for (const [evidenceKey, evidence] of this.evidence) {
+                    if (!evidence.is('possible')) {
+                        this.setProp('isPossibleByEvidence', false);
+                        break;
+                    }
+                }
             });
 
         return this;
@@ -127,11 +128,16 @@ export default class Core {
                 isPossible: true
             })
             .addPropAutoUpdate('isPossible', function() {
-                if (this.prop('isSelected') && !this.prop('isEliminated')) {
+                if (!this.prop('isSelected') && !this.prop('isEliminated')) {
                     this.setProp('isPossible', true);
+                } else {
+                    this.setProp('isPossible', false);
                 }
 
                 return this;
+            })
+            .addIsCheck('possible', function() {
+                return (this.prop('isSelected') || this.prop('isPossible'));
             });
 
         return this;
@@ -165,12 +171,31 @@ export default class Core {
         if (typeof evidenceKey === 'undefined') {
             return this.#evidenceSelected;
         } else if (typeof value === 'undefined') {
-            return this.#evidenceSelected[evidenceKey];
+            return this.#evidenceSelected.has(evidenceKey);
         } else {
-            this.#evidenceSelected[evidenceKey] = value;
+            if (value) {
+                this.#evidenceSelected.add(evidenceKey);
+            } else {
+                this.#evidenceSelected.delete(evidenceKey);
+            }
+
             this.evidence(evidenceKey)
                 .setProp('isSelected', value)
                 .autoUpdateProp('isPossible');
+
+            for (const [ghostKey, ghost] of this.allGhosts()) {
+                if (
+                    !ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) &&
+                    value
+                ) {
+                    ghost.prop('eliminatedByEvidence').add(evidenceKey);
+                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !value) {
+                    ghost.prop('eliminatedByEvidence').delete(evidenceKey);
+                }
+
+                ghost.autoUpdateProp('isPossibleByEvidence');
+            }
+
             return this;
         }
     }
@@ -180,12 +205,30 @@ export default class Core {
         if (typeof evidenceKey === 'undefined') {
             return this.#evidenceEliminated;
         } else if (typeof value === 'undefined') {
-            return this.#evidenceEliminated[evidenceKey];
+            return this.#evidenceEliminated.has(evidenceKey);
         } else {
-            this.#evidenceEliminated[evidenceKey] = value;
+            if (value) {
+                this.#evidenceEliminated.add(evidenceKey);
+            } else {
+                this.#evidenceEliminated.delete(evidenceKey);
+            }
+
             this.evidence(evidenceKey)
                 .setProp('isEliminated', value)
                 .autoUpdateProp('isPossible');
+
+            for (const [ghostKey, ghost] of this.allGhosts()) {
+                if (ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) && value) {
+                    ghost.prop('eliminatedByEvidence').add(evidenceKey);
+                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !value) {
+                    ghost.prop('eliminatedByEvidence').delete(evidenceKey);
+                } else {
+                    continue;
+                }
+
+                ghost.autoUpdateProp('isPossibleByEvidence');
+            }
+
             return this;
         }
     }
@@ -195,9 +238,14 @@ export default class Core {
         if (typeof evidenceKey === 'undefined') {
             return this.#ghostsEliminated;
         } else if (typeof value === 'undefined') {
-            return this.#ghostsEliminated[evidenceKey];
+            return this.#ghostsEliminated.has(evidenceKey);
         } else {
-            this.#ghostsEliminated[evidenceKey] = value;
+            if (value) {
+                this.#ghostsEliminated.add(evidenceKey);
+            } else {
+                this.#ghostsEliminated.delete(evidenceKey);
+            }
+
             return this;
         }
     }
@@ -207,11 +255,26 @@ export default class Core {
         if (typeof evidenceKey === 'undefined') {
             return this.#evidenceAutoEliminated;
         } else if (typeof value === 'undefined') {
-            return this.#evidenceAutoEliminated[evidenceKey];
+            return this.#evidenceAutoEliminated.has(evidenceKey);
         } else {
-            this.#evidenceAutoEliminated[evidenceKey] = value;
+            if (value) {
+                this.#evidenceAutoEliminated.add(evidenceKey);
+            } else {
+                this.#evidenceAutoEliminated.delete(evidenceKey);
+            }
+
             return this;
         }
+    }
+
+    static evidenceCanBeSelected(evidenceKey)
+    {
+        return (!this.evidenceEliminated(evidenceKey) && !this.evidenceAutoEliminated(evidenceKey));
+    }
+
+    static evidenceCanBeEliminated(evidenceKey)
+    {
+        return (!this.evidenceEliminated(evidenceKey) && !this.evidenceAutoEliminated(evidenceKey));
     }
 
     static get currentTree()
@@ -242,9 +305,14 @@ export default class Core {
     {
         this.evidenceSelected(evidenceKey, true);
 
+        return true;
     }
 
     static debug() {
+        if (!this.#debugMode) {
+            return;
+        }
+
         console.warn('[Core Debug]');
         console.warn('--Evidence Index');
         console.log(this.allEvidence());

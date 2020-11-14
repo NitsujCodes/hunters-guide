@@ -1,8 +1,10 @@
 export default class Config {
+
     static #data = new Map();
     static #hasChildren = new Set();
     static #structureLocked = false;
     static #validators = new Map();
+    static #debugMode = false;
 
     static get(key) {
         return this.#data.get(key);
@@ -47,6 +49,11 @@ export default class Config {
 
     static lockStructure() {
         this.#structureLocked = true;
+    }
+
+    static debugMode(status)
+    {
+        this.#debugMode = status;
     }
 
     static #isValid(key, value) {
@@ -96,6 +103,10 @@ export default class Config {
     }
 
     static debug() {
+        if (!this.#debugMode) {
+            return;
+        }
+
         console.warn('[Config Debug]');
         console.warn('--Data');
         console.log(this.#data);

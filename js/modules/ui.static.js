@@ -8,15 +8,21 @@ export default class UI {
     static $ghostList = this.$ghostsSection.find('#ghostList');
     static $evidencePossibleSection = $('#evidencePossibleContainer');
     static $evidencePossible = this.$evidencePossibleSection.find('#evidencePossible');
+    static #debugMode = false;
 
     constructor() {};
 
-    static init()
+    static init(debugMode = false)
     {
+        this.#debugMode = debugMode;
+
         Config.set({
             //UI Global Config Items
             'ui.mainIcons.eliminate': 'fa fa-times-circle',
             'ui.mainIcons.unEliminate': 'far fa-times-circle',
+            'ui.evidenceButton.default': 'btn-dark',
+            'ui.evidenceButton.selected': 'btn-success',
+            'ui.evidenceButton.eliminated': 'btn-outline-danger disabled',
             //renderEvidence Config Items
             'ui.renderEvidence.buttonContainer': '<div class="col-md-6 col-sm-6 evidence-outer-col"></div>',
             'ui.renderEvidence.buttonTemplate': '<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>',
@@ -127,18 +133,16 @@ export default class UI {
                     .append(replaceData(Config.get('ui.renderGhosts.ghostUniqueStrength'), replacements))
                     .append(replaceData(Config.get('ui.renderGhosts.ghostWeakness'), replacements));
 
-                if (Core.evidenceSelected().length < Core.maxEvidence) {
+                if (Core.evidenceSelected().size < Core.maxEvidence) {
                     $ghostEvidence = $listItem.find('.ghostEvidence');
 
-                    for (let i = 0; i < ghost.evidence.length; i++) {
-                        evidenceData = Core.evidence(ghost.evidence[i]);
+                    for (const [evidenceKey, evidence] of ghost.evidence) {
+                        replacements.badgeClass = evidence.badgeClass;
+                        replacements.iconClass = evidence.iconClass;
 
-                        replacements.badgeClass = evidenceData.badgeClass;
-                        replacements.iconClass = evidenceData.iconClass;
-
-                        if (typeof evidenceSelectedUnique[ghost.evidence[i]] === 'undefined') {
+                        if (evidence.prop('isPossible')) {
                             $ghostEvidence.append(replaceData(Config.get('ui.renderGhosts.evidence'), replacements));
-                            evidencePossible[ghost.evidence[i]] = '';
+                            evidencePossible[evidenceKey] = '';
                         }
                     }
                 }
@@ -149,7 +153,7 @@ export default class UI {
         this.$evidencePossible.find('.badge').remove();
         this.$evidencePossible.html('');
 
-        if (Core.evidenceSelected().length) {
+        if (Core.evidenceSelected().size || Core.evidenceEliminated().size) {
             for (let evidence of Object.keys(evidencePossible)) {
                 let evidenceData = Core.evidence(evidence);
 
@@ -163,5 +167,43 @@ export default class UI {
         } else {
             this.$evidencePossible.html('All');
         }
+    }
+
+    static switchEvidenceSelected(evidenceKey, select)
+    {
+        if (select) {
+            //select evidence
+            this.$evidenceSection
+                .find('.btn-evidence[data-evidence="' + evidenceKey + '"]').first()
+                .removeClass(Config.get('ui.evidenceButton.default'))
+                .addClass(Config.get('ui.evidenceButton.selected'));
+        } else {
+            //deselect evidence
+            this.$evidenceSection
+                .find('.btn-evidence[data-evidence="' + evidenceKey + '"]').first()
+                .removeClass(Config.get('ui.evidenceButton.selected'))
+                .addClass(Config.get('ui.evidenceButton.default'));
+        }
+
+        return this;
+    }
+
+    static switchEvidenceEliminated(evidenceKey, eliminate)
+    {
+        if (eliminate) {
+            //eliminate evidence
+            this.$evidenceSection
+                .find('.btn-evidence[data-evidence="' + evidenceKey + '"]').first()
+                .removeClass(Config.get('ui.evidenceButton.default'))
+                .addClass(Config.get('ui.evidenceButton.eliminated'));
+        } else {
+            //uneliminate evidence
+            this.$evidenceSection
+                .find('.btn-evidence[data-evidence="' + evidenceKey + '"]').first()
+                .removeClass(Config.get('ui.evidenceButton.eliminated'))
+                .addClass(Config.get('ui.evidenceButton.default'));
+        }
+
+        return this;
     }
 }
