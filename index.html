@@ -5,7 +5,7 @@
     <title>Hunters Guide</title>
 
     <link rel="stylesheet" href="plugins/bootstrap-4.5.3/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/main-b4.2.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="plugins/fontawesome-5.15.1/css/all.css" />
 </head>
 <body>
@@ -49,6 +49,18 @@
     </div>
 </div>
 </body>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./js/cacheWorker.js', {scope: './js/'})
+            .then((reg) => {
+                // registration worked
+                console.log('Registration succeeded. Scope is ' + reg.scope);
+            }).catch((error) => {
+            // registration failed
+            console.log('Registration failed with ' + error);
+        });
+    }
+</script>
 <script type="text/javascript" src="plugins/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 <script type="text/javascript" src="plugins/bootstrap-4.5.3/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="plugins/fontawesome-5.15.1/js/all.js"></script>

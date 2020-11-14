@@ -92,7 +92,6 @@ export default class Core {
             })
             .addPropAutoUpdate('isPossibleByEvidence', function() {
                 if (this.prop('eliminatedByEvidence').size) {
-                    console.log('hasEliminated' + this.name);
                     this.setProp('isPossibleByEvidence', false);
                     return;
                 } else if (!this.prop('isPossibleByEvidence')) {
@@ -166,7 +165,7 @@ export default class Core {
         return this.#tacticIndex;
     }
 
-    static evidenceSelected(evidenceKey, value)
+    static evidenceSelected(evidenceKey, value, refreshGhostProps = true)
     {
         if (typeof evidenceKey === 'undefined') {
             return this.#evidenceSelected;
@@ -183,24 +182,15 @@ export default class Core {
                 .setProp('isSelected', value)
                 .autoUpdateProp('isPossible');
 
-            for (const [ghostKey, ghost] of this.allGhosts()) {
-                if (
-                    !ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) &&
-                    value
-                ) {
-                    ghost.prop('eliminatedByEvidence').add(evidenceKey);
-                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !value) {
-                    ghost.prop('eliminatedByEvidence').delete(evidenceKey);
-                }
-
-                ghost.autoUpdateProp('isPossibleByEvidence');
+            if (refreshGhostProps) {
+                this.refreshGhostsSelectedByEvidence(evidenceKey, value);
             }
 
             return this;
         }
     }
 
-    static evidenceEliminated(evidenceKey, value)
+    static evidenceEliminated(evidenceKey, value, refreshGhostProps = true)
     {
         if (typeof evidenceKey === 'undefined') {
             return this.#evidenceEliminated;
@@ -217,19 +207,77 @@ export default class Core {
                 .setProp('isEliminated', value)
                 .autoUpdateProp('isPossible');
 
-            for (const [ghostKey, ghost] of this.allGhosts()) {
-                if (ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) && value) {
+            if (refreshGhostProps) {
+                this.refreshGhostsEliminatedByEvidence(evidenceKey, value);
+            }
+
+            return this;
+        }
+    }
+
+    static refreshGhostsSelectedByEvidence(evidenceKey, selected)
+    {
+        for (const [ghostKey, ghost] of this.allGhosts()) {
+            if (
+                !ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) &&
+                selected
+            ) {
+                ghost.prop('eliminatedByEvidence').add(evidenceKey);
+            } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !selected) {
+                ghost.prop('eliminatedByEvidence').delete(evidenceKey);
+            }
+
+            ghost.autoUpdateProp('isPossibleByEvidence');
+        }
+    }
+
+    static refreshGhostsSelectedByAllEvidence(selected)
+    {
+        for (const [ghostKey, ghost] of this.allGhosts()) {
+            for (const [evidenceKey, evidence] of this.allEvidence()) {
+                if (
+                    !ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) &&
+                    selected
+                ) {
                     ghost.prop('eliminatedByEvidence').add(evidenceKey);
-                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !value) {
+                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !selected) {
+                    ghost.prop('eliminatedByEvidence').delete(evidenceKey);
+                }
+            }
+
+            ghost.autoUpdateProp('isPossibleByEvidence');
+        }
+    }
+
+    static refreshGhostsEliminatedByEvidence(evidenceKey, eliminated)
+    {
+        for (const [ghostKey, ghost] of this.allGhosts()) {
+            if (ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) && eliminated) {
+                ghost.prop('eliminatedByEvidence').add(evidenceKey);
+            } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !eliminated) {
+                ghost.prop('eliminatedByEvidence').delete(evidenceKey);
+            } else {
+                continue;
+            }
+
+            ghost.autoUpdateProp('isPossibleByEvidence');
+        }
+    }
+
+    static refreshGhostsEliminatedByAllEvidence(eliminated)
+    {
+        for (const [ghostKey, ghost] of this.allGhosts()) {
+            for (const [evidenceKey, evidence] of this.allEvidence()) {
+                if (ghost.evidence.has(evidenceKey) && !ghost.prop('eliminatedByEvidence').has(evidenceKey) && eliminated) {
+                    ghost.prop('eliminatedByEvidence').add(evidenceKey);
+                } else if (ghost.prop('eliminatedByEvidence').has(evidenceKey) && !eliminated) {
                     ghost.prop('eliminatedByEvidence').delete(evidenceKey);
                 } else {
                     continue;
                 }
-
-                ghost.autoUpdateProp('isPossibleByEvidence');
             }
 
-            return this;
+            ghost.autoUpdateProp('isPossibleByEvidence');
         }
     }
 
