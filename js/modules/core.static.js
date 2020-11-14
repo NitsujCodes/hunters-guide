@@ -31,6 +31,9 @@ export default class Core {
         return this.#maxEvidence;
     }
 
+    /**
+     * Builds the evidence tree for quick evidence and ghost referencing.
+     */
     static #buildEvidenceTree() {
         this.#evidenceTree = new Map();
 
