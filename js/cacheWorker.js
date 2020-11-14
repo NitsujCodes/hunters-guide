@@ -3,6 +3,32 @@ var CURRENT_CACHES = {
     font: 'font-cache-v' + CACHE_VERSION
 };
 
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open('v1').then((cache) => {
+            return cache.addAll([
+                './js/',
+                './index.html',
+                './css/main.css',
+                './js/main.js',
+                './js/modules/',
+                './js/modules/baseClass.obj.js',
+                './js/modules/config.static.js',
+                './js/modules/core.static.js',
+                './js/modules/evidence.obj.js',
+                './js/modules/ghost.obj.js',
+                './js/modules/helpers.js',
+                './js/modules/tactic.obj.js',
+                './js/modules/ui.static.js',
+                './js/seeders/',
+                './js/seeders/evidence.seed.js',
+                './js/seeders/ghost.seed.js',
+                './js/seeders/tactic.seed.js'
+            ]);
+        })
+    );
+});
+
 self.addEventListener('activate', function(event) {
     // Delete all caches that aren't named in CURRENT_CACHES.
     // While there is only one cache in this example, the same logic will handle the case where
@@ -12,11 +38,9 @@ self.addEventListener('activate', function(event) {
         caches.keys().then(function(cacheNames) {
             return Promise.all(
                 cacheNames.map(function(cacheName) {
-                    if (!expectedCacheNamesSet.has(cacheName)) {
                         // If this cache name isn't present in the set of "expected" cache names, then delete it.
                         console.log('Deleting out of date cache:', cacheName);
                         return caches.delete(cacheName);
-                    }
                 })
             );
         })
