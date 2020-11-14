@@ -2,7 +2,7 @@ import Config from './modules/config.static.js';
 import Core from './modules/core.static.js';
 import UI from './modules/ui.static.js';
 
-let debugEnabled = false;
+let debugEnabled = true;
 
 Core.init(debugEnabled);
 UI.init(debugEnabled);
@@ -71,6 +71,7 @@ $('body')
     .on('click', '#resetButton', function () {
         for (const evidenceKey of Core.evidenceAutoEliminated()) {
             Core.evidenceAutoEliminated(evidenceKey, false);
+            Core.evidenceEliminated(evidenceKey, false, false);
         }
 
         for (const evidenceKey of Core.evidenceSelected()) {
