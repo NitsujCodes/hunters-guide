@@ -29,20 +29,16 @@ self.addEventListener('install', (event) => {
     );
 });
 
-self.addEventListener('activate', function(event) {
-    // Delete all caches that aren't named in CURRENT_CACHES.
-    // While there is only one cache in this example, the same logic will handle the case where
-    // there are multiple versioned caches.
-    var expectedCacheNamesSet = new Set(Object.values(CURRENT_CACHES));
+self.addEventListener('activate', (event) => {
+    var cacheKeeplist = ['v1'];
+
     event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(
-                cacheNames.map(function(cacheName) {
-                        // If this cache name isn't present in the set of "expected" cache names, then delete it.
-                        console.log('Deleting out of date cache:', cacheName);
-                        return caches.delete(cacheName);
-                })
-            );
+        caches.keys().then((keyList) => {
+            return Promise.all(keyList.map((key) => {
+                if (cacheKeeplist.indexOf(key) === -1) {
+                    return caches.delete(key);
+                }
+            }));
         })
     );
 });
