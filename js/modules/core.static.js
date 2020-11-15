@@ -14,7 +14,7 @@ export default class Core {
     static #ghostsEliminated = new Set();
     static #evidenceAutoEliminated = new Set();
 
-    static #currentEvidenceTreePosition = {};
+    static #currentEvidenceTreePosition = this.#evidenceTree;
 
     static #maxEvidence = 3;
     static #debugMode = false;
@@ -24,6 +24,7 @@ export default class Core {
     static init(debugMode = false) {
         this.#debugMode = debugMode;
         this.#buildEvidenceTree();
+        this.refetchCurrentTreePosition();
     }
 
     static get maxEvidence()
@@ -127,10 +128,11 @@ export default class Core {
             .setProp({
                 isSelected: false,
                 isEliminated: false,
+                isEliminatedByEvidence: false,
                 isPossible: true
             })
             .addPropAutoUpdate('isPossible', function() {
-                if (!this.prop('isSelected') && !this.prop('isEliminated')) {
+                if (!this.prop('isSelected') && !this.prop('isEliminated') && !this.prop('isEliminatedByEvidence')) {
                     this.setProp('isPossible', true);
                 } else {
                     this.setProp('isPossible', false);
@@ -140,6 +142,9 @@ export default class Core {
             })
             .addIsCheck('possible', function() {
                 return (this.prop('isSelected') || this.prop('isPossible'));
+            })
+            .addIsCheck('eliminated', function() {
+                return (this.prop('isEliminated') || this.prop('isEliminatedByEvidence'));
             });
 
         return this;
@@ -177,8 +182,24 @@ export default class Core {
         } else {
             if (value) {
                 this.#evidenceSelected.add(evidenceKey);
+                this.moveTreeToNextEvidence(evidenceKey);
             } else {
                 this.#evidenceSelected.delete(evidenceKey);
+                this.refetchCurrentTreePosition();
+
+                for (const [workingEvidenceKey, evidence] of this.possibleEvidence()) {
+                    if (evidence.prop('isEliminatedByEvidence')) {
+                        //Evidence was previously eliminated by evidence so unEliminate it
+                        evidence.setProp('isEliminatedByEvidence')
+                            .autoUpdateProp('isPossible');
+
+                        if (evidence.is('possible') && this.evidenceAutoEliminated(workingEvidenceKey)) {
+                            //If evidence is now possible and is currently marked as auto-eliminated then drop it
+                            //from auto-elimination
+                            this.evidenceAutoEliminated(workingEvidenceKey, false);
+                        }
+                    }
+                }
             }
 
             this.evidence(evidenceKey)
@@ -333,18 +354,88 @@ export default class Core {
         return this.#currentEvidenceTreePosition;
     }
 
-    static updateCurrentTree()
+    static moveTreeToNextEvidence(evidenceKey)
+    {
+        if (typeof this.#currentEvidenceTreePosition.nextEvidence === 'undefined') {
+            this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.get(evidenceKey);
+        } else {
+            this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.nextEvidence.get(evidenceKey);
+        }
+
+        return this;
+    }
+
+    static refetchCurrentTreePosition()
     {
         this.#currentEvidenceTreePosition = this.#evidenceTree;
-        for (let i = 0; i < this.#evidenceSelected.length; i++) {
+        for (const evidenceKey of this.evidenceSelected()) {
             if (typeof this.#currentEvidenceTreePosition.nextEvidence === 'undefined') {
-                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition[this.#evidenceSelected[i]];
+                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.get(evidenceKey);
             } else {
-                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.nextEvidence[this.#evidenceSelected[i]];
+                this.#currentEvidenceTreePosition = this.#currentEvidenceTreePosition.nextEvidence.get(evidenceKey);
             }
         }
 
         return this;
+    }
+
+    static possibleGhosts()
+    {
+        if (typeof this.currentTree.ghosts === 'undefined') {
+            //We are at the start of the tree
+            return this.allGhosts();
+        }
+
+        return this.currentTree.ghosts;
+    }
+
+    static possibleEvidence()
+    {
+        if (typeof this.currentTree.nextEvidence === 'undefined') {
+            return this.allEvidence();
+        }
+
+        let evidence = new Map();
+        for (const [evidenceKey, evidenceTreeData] of this.currentTree.nextEvidence) {
+            evidence.set(evidenceKey, this.evidence(evidenceKey));
+        }
+
+        return evidence;
+    }
+
+    static notPossibleEvidence()
+    {
+        if (typeof this.currentTree.nextEvidence === 'undefined') {
+            return new Map();
+        }
+
+        let possible = this.possibleEvidence();
+        let notPossible = new Map();
+        for (const [evidenceKey, evidence] of this.allEvidence()) {
+            if (!possible.has(evidenceKey)) {
+                notPossible.set(evidenceKey, evidence);
+            }
+        }
+
+        return notPossible;
+    }
+
+    static notPossibleGhosts()
+    {
+        if (typeof this.currentTree.ghosts === 'undefined') {
+            //We are at the start of the tree
+            return new Map();
+        }
+
+        let possible = this.possibleGhosts();
+        let notPossible = new Map();
+        for (const [ghostKey, ghost] of this.allGhosts()) {
+            if (!possible.has(ghostKey)) {
+                notPossible.set(ghostKey, ghost);
+            }
+        }
+
+        return notPossible;
     }
 
     static get tree()

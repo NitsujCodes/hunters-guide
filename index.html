@@ -51,13 +51,13 @@
 </body>
 <script>
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./js/cacheWorker-v1.2.js', {scope: './js/'})
+        navigator.serviceWorker.register('./js/cacheWorker-v1.5.js', {scope: './js/'})
             .then((reg) => {
                 // registration worked
-                console.log('Registration succeeded. Scope is ' + reg.scope);
+                //console.log('Registration succeeded. Scope is ' + reg.scope);
             }).catch((error) => {
             // registration failed
-            console.log('Registration failed with ' + error);
+            //console.log('Registration failed with ' + error);
         });
     }
 </script>

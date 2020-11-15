@@ -2,7 +2,7 @@ import Config from './modules/config.static.js';
 import Core from './modules/core.static.js';
 import UI from './modules/ui.static.js';
 
-let debugEnabled = true;
+let debugEnabled = false;
 
 Core.init(debugEnabled);
 UI.init(debugEnabled);
@@ -27,11 +27,14 @@ $('body')
 
                     let evidence = Core.evidence(workingEvidenceKey);
 
-                    evidence.setProp('isEliminated', false);
-                    Core.evidenceAutoEliminated(workingEvidenceKey, false);
-                    evidence.autoUpdateProp('isPossible');
-
-                    UI.switchEvidenceEliminated(workingEvidenceKey, false);
+                    if (evidence.prop('isEliminated')) {
+                        evidence.setProp('isEliminated', false)
+                            .autoUpdateProp('isPossible');
+                        if (evidence.is('possible')) {
+                            Core.evidenceAutoEliminated(workingEvidenceKey, false);
+                            UI.switchEvidenceEliminated(workingEvidenceKey, false);
+                        }
+                    }
                 }
             }
 
@@ -71,6 +74,7 @@ $('body')
     .on('click', '#resetButton', function () {
         for (const evidenceKey of Core.evidenceAutoEliminated()) {
             Core.evidenceAutoEliminated(evidenceKey, false);
+            Core.evidence(evidenceKey).setProp('isEliminatedByEvidence', false);
             Core.evidenceEliminated(evidenceKey, false, false);
         }
 

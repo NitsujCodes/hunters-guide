@@ -1,4 +1,4 @@
-const APPVERSION = 'v1.2';
+const APPVERSION = 'v1.5';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
@@ -30,7 +30,6 @@ self.addEventListener('activate', (event) => {
         caches.keys().then((keyList) => {
             return Promise.all(keyList.map((key) => {
                 if (cacheKeeplist.indexOf(key) === -1) {
-                    console.log('delete: ' + key);
                     return caches.delete(key);
                 }
             }));
