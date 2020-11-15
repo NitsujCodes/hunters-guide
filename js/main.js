@@ -94,7 +94,7 @@ $('body')
 
         UI.render();
     })
-    .on('click', '.eliminate-icon', function (e) {
+    .on('click', '.eliminate-lock,.eliminate-icon', function (e) {
         e.stopPropagation();
         e.preventDefault();
 
