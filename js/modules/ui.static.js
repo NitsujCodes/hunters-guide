@@ -147,7 +147,6 @@ export default class UI {
         //Resync UI Eliminations with Core Eliminations
         for (const [evidenceKey, evidence] of Core.possibleEvidence()) {
             if (UI.isEvidenceEliminated(evidenceKey) && evidence.is('possible')) {
-                console.log('uneliminate: ' + evidenceKey);
                 UI.switchEvidenceEliminated(evidenceKey, false);
             }
         }

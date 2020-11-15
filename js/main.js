@@ -102,6 +102,25 @@ $('body')
         let evidenceKey = $evidenceButton.data('evidence');
 
         if (Core.evidenceSelected(evidenceKey)) {
+            if (Core.evidenceSelected().size === Core.maxEvidence) {
+                for (const workingEvidenceKey of Core.evidenceAutoEliminated()) {
+                    if (evidenceKey === workingEvidenceKey) {
+                        continue;
+                    }
+
+                    let evidence = Core.evidence(workingEvidenceKey);
+
+                    if (evidence.prop('isEliminated')) {
+                        evidence.setProp('isEliminated', false)
+                            .autoUpdateProp('isPossible');
+                        if (evidence.is('possible')) {
+                            Core.evidenceAutoEliminated(workingEvidenceKey, false);
+                            UI.switchEvidenceEliminated(workingEvidenceKey, false);
+                        }
+                    }
+                }
+            }
+
             Core.evidenceSelected(evidenceKey, false);
             UI.switchEvidenceSelected(evidenceKey, false);
         }
