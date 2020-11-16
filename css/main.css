@@ -13,8 +13,47 @@ html {
     touch-action: manipulation;
 }
 
+#topbar .btn-group {
+    padding-right: 20px;
+    padding-top: 5px;
+}
+
+#brandicon {
+    margin-top: 5px;
+    margin-left: 25px;
+}
+
 #main-content {
-    margin: 20px;
+    margin: 5px 20px 0 20px;
+}
+
+.nav-tabs.bg-hunter-dark {
+    background-color: #444a50;
+    color: #ccc;
+    border-bottom: 1px solid #444a50;
+}
+
+.nav-tabs.bg-hunter-dark .nav-link {
+    color: #ccc;
+}
+
+.nav-tabs.bg-hunter-dark .nav-link:hover {
+    text-decoration: none;
+    border-color: #444a50;
+}
+
+.nav-tabs.bg-hunter-dark .nav-link:focus {
+    text-decoration: none;
+    border-color: #444a50;
+}
+
+.nav-tabs.bg-hunter-dark .nav-link.active {
+    background-color: #333;
+    border-color: #444a50 #444a50 #333;
+}
+
+.nav-tabs.bg-hunter-dark .nav-link.active:hover {
+    text-decoration: none;
 }
 
 #resetButton {
@@ -215,6 +254,18 @@ html {
 }
 
 @media screen and (max-device-width: 768px) and (-webkit-device-pixel-ratio: 2) {
+    #topbar .nav .nav-item .nav-link {
+        font-size: 26pt;
+    }
+
+    #brandicon {
+        margin-top: 20px;
+    }
+
+    #resetButton {
+        margin-top: 5px;
+    }
+
     .btn-xl {
         padding: 20px 30px;
         font-size: 30px;
@@ -294,6 +345,18 @@ html {
 }
 
 @media screen and (max-device-width: 768px) {
+    #topbar .nav .nav-item .nav-link {
+        font-size: 26pt;
+    }
+
+    #brandicon {
+        margin-top: 20px;
+    }
+
+    #resetButton {
+        margin-top: 5px;
+    }
+
     .btn-xl {
         padding: 10px 10px;
         font-size: 25px;
