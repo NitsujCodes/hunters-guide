@@ -23,6 +23,8 @@ export default class UI {
             'ui.evidenceButton.default': 'btn-dark',
             'ui.evidenceButton.selected': 'btn-success',
             'ui.evidenceButton.eliminated': 'btn-outline-danger disabled',
+            'ui.renderGhosts.ghostNameDropdownIconCollapsed': 'fa fa-chevron-down',
+            'ui.renderGhosts.ghostNameDropdownIconExpanded': 'fa fa-chevron-up',
             //renderEvidence Config Items
             'ui.renderEvidence.buttonContainer': '<div class="col-md-6 col-sm-6 evidence-outer-col"></div>',
             'ui.renderEvidence.buttonTemplate': '<button type="button" class="btn btn-dark btn-evidence btn-xl"></button>',
@@ -32,6 +34,7 @@ export default class UI {
             'ui.renderEvidence.evidenceCol3': '<div class="col-sm-2 eliminate-lock evidence-col-3"><i class="!!eliminateIcon!! eliminate-icon"></i></div>',
             //renderGhost Config Items
             'ui.renderGhosts.listItemTemplate': '<div class="card bg-dark"><div class="card-header"><h5 class="mb-0"><div class="row"><div class="col-sm-8 ghost-header-left"><button id="ghostName" class="btn btn-link collapsed" data-toggle="collapse" aria-expanded="true"></button></div><div class="col-sm-4 ghost-header-right"><span class="ghostEvidence float-right"></span></div></div></h5></div><div class="collapse" data-parent="#ghostList"><div class="card-body"></div></div></div>',
+            'ui.renderGhosts.ghostNameDropdown': '<i class="fa fa-chevron-down ghostname-dropdown-toggle" style="font-size: 18pt;margin-right: 10px;"></i>&nbsp;',
             'ui.renderGhosts.ghostDescription': '<p class="card-text">!!description!!</p>',
             'ui.renderGhosts.ghostUniqueStrength': '<p class="text-danger"><strong>!!uniqueStrength!!</strong></p>',
             'ui.renderGhosts.ghostWeakness': '<p class="text-success"><strong>!!weakness!!</strong></p>',
@@ -116,7 +119,7 @@ export default class UI {
                     .find('#ghostName')
                     .attr('data-target', '#card-info-' + ghostKey)
                     .attr('aria-controls', 'card-info-' + ghostKey)
-                    .text(ghost.name);
+                    .html(replaceData(Config.get('ui.renderGhosts.ghostNameDropdown'), replacements) + ghost.name);
 
                 $listItem.find('.collapse').first()
                     .attr('id', 'card-info-' + ghostKey)

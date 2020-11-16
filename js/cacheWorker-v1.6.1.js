@@ -1,4 +1,4 @@
-const APPVERSION = 'v1.6';
+const APPVERSION = 'v1.6.1';
 
 self.addEventListener('install', (event) => {
     event.waitUntil(

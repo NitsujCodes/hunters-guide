@@ -112,6 +112,11 @@ html {
     font-size: 10pt;
 }
 
+#ghostName .ghostname-dropdown-toggle {
+    font-size: 18pt;
+    margin-right: 10px;
+}
+
 .btn-evidence {
     width: 100%;
     font-size: 11pt;

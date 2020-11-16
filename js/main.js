@@ -138,6 +138,18 @@ $('body')
         }
 
         //renderGhosts();
+    })
+    .on('show.bs.collapse', '#ghostList .card', function() {
+        let $ghostNameIcon = $(this).find('#ghostName .ghostname-dropdown-toggle').first();
+        $ghostNameIcon
+            .removeClass(Config.get('ui.renderGhosts.ghostNameDropdownIconCollapsed'))
+            .addClass(Config.get('ui.renderGhosts.ghostNameDropdownIconExpanded'));
+    })
+    .on('hide.bs.collapse', '#ghostList .card', function() {
+        let $ghostNameIcon = $(this).find('#ghostName .ghostname-dropdown-toggle').first();
+        $ghostNameIcon
+            .removeClass(Config.get('ui.renderGhosts.ghostNameDropdownIconExpanded'))
+            .addClass(Config.get('ui.renderGhosts.ghostNameDropdownIconCollapsed'));
     });
 
 Config.debug();
