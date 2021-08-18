@@ -113,7 +113,7 @@ Core.addGhost('demon', {
 Core.addGhost('yurei', {
     name: 'Yurei',
     description: '',
-    uniqueStrength: 'Has a much stronger affect on a persons sanity.',
+    uniqueStrength: 'Yurei have been known to have a stronger effect on people\'s Sanity during a manifestation.',
     weakness: 'Smudging its room will cause it to not wonder around the location for a long time.',
     evidence: [
         'ghost_orbs',
