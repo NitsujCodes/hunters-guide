@@ -138,7 +138,7 @@ Core.addGhost('yokai', {
     uniqueStrength: 'Talking near a Yokai will anger it and cause it to attack more often.',
     weakness: 'While hunting, it can only hear voices close to it.',
     evidence: [
-        'ghost_orb',
+        'ghost_orbs',
         'spirit_box',
         'ghost_writing'
     ]
@@ -149,7 +149,7 @@ Core.addGhost('hantu', {
     uniqueStrength: 'Hantu moves faster in colder areas.',
     weakness: 'Hantu moves slower in warmer areas.',
     evidence: [
-        'ghost_orb',
+        'ghost_orbs',
         'fingerprints',
         'ghost_writing'
     ]
