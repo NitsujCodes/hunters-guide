@@ -132,3 +132,25 @@ Core.addGhost('oni', {
         'ghost_writing'
     ]
 });
+Core.addGhost('yokai', {
+    name: 'Yokai',
+    description: '',
+    uniqueStrength: 'Talking near a Yokai will anger it and cause it to attack more often.',
+    weakness: 'While hunting, it can only hear voices close to it.',
+    evidence: [
+        'ghost_orb',
+        'spirit_box',
+        'ghost_writing'
+    ]
+});
+Core.addGhost('hantu', {
+    name: 'Hantu',
+    description: '',
+    uniqueStrength: 'Hantu moves faster in colder areas.',
+    weakness: 'Hantu moves slower in warmer areas.',
+    evidence: [
+        'ghost_orb',
+        'fingerprints',
+        'ghost_writing'
+    ]
+});
