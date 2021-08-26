@@ -157,7 +157,7 @@ Core.addGhost('hantu', {
 Core.addGhost('goryo', {
     name: 'Goryo',
     description: '',
-    uniqueStrength: 'A Goryi will usually only show itself on camera if there are no people nearby.',
+    uniqueStrength: 'A Goryo will usually only show itself on camera if there are no people nearby.',
     weakness: 'They are rarely seen far from their place of death.',
     evidence: [
         'emf5',
