@@ -171,7 +171,7 @@ Core.addGhost('myling', {
     uniqueStrength: 'A Myling is known to be quieter when hunting.',
     weakness: 'Mylings more frequently make paranormal sounds.',
     evidence: [
-        'em5',
+        'emf5',
         'fingerprints',
         'ghost_writing'
     ]
