@@ -22,7 +22,7 @@ Core.addEvidence('ghost_orbs', {
 });
 Core.addEvidence('fingerprints', {
     name: 'Fingerprints',
-    badgeClass: 'badge-success',
+    badgeClass: 'bg-fingerprints',
     iconClass: 'fa fa-fingerprint'
 });
 Core.addEvidence('freezing_temps', {
