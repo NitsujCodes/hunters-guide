@@ -7,7 +7,7 @@ Core.addGhost('spirit', {
     weakness: 'Using a smudge stick will stop it from attacking for a long period of time.',
     evidence: [
         'spirit_box',
-        'fingerprints',
+        'emf5',
         'ghost_writing'
     ]
 });
@@ -17,8 +17,8 @@ Core.addGhost('wraith', {
     uniqueStrength: 'Almost never touch the ground and so cannot be tracked by footsteps.',
     weakness: '',
     evidence: [
-        'fingerprints',
-        'freezing_temps',
+        'emf5',
+        'dots_projector',
         'spirit_box'
     ]
 });
@@ -28,9 +28,9 @@ Core.addGhost('phantom', {
     uniqueStrength: 'Looking at a Phantom will considerably drop your sanity.',
     weakness: 'Taking a photo will make it temporarily invisible.',
     evidence: [
-        'emf5',
-        'ghost_orbs',
-        'freezing_temps'
+        'spirit_box',
+        'fingerprints',
+        'dots_projector'
     ]
 });
 Core.addGhost('poltergeist', {
@@ -41,7 +41,7 @@ Core.addGhost('poltergeist', {
     evidence: [
         'spirit_box',
         'fingerprints',
-        'ghost_orbs'
+        'ghost_writing'
     ]
 });
 Core.addGhost('banshee', {
@@ -50,9 +50,9 @@ Core.addGhost('banshee', {
     uniqueStrength: 'Will only target one person at a time.',
     weakness: 'Fears the crucifix and so will be less aggressive when near one.',
     evidence: [
-        'emf5',
+        'ghost_orbs',
         'fingerprints',
-        'freezing_temps'
+        'dots_projector'
     ]
 });
 Core.addGhost('jinn', {
@@ -61,8 +61,8 @@ Core.addGhost('jinn', {
     uniqueStrength: 'Will travel at a faster speed if it\'s target is far away.',
     weakness: 'Turning off the locations power source will disable the Jinns ability.',
     evidence: [
-        'spirit_box',
-        'ghost_orbs',
+        'fingerprints',
+        'freezing_temps',
         'emf5'
     ]
 });
@@ -74,7 +74,7 @@ Core.addGhost('mare', {
     evidence: [
         'spirit_box',
         'ghost_orbs',
-        'freezing_temps'
+        'ghost_writing'
     ]
 });
 Core.addGhost('revenant', {
@@ -83,8 +83,8 @@ Core.addGhost('revenant', {
     uniqueStrength: 'Will travel at a significantly faster speed while hunting if it can see its target.',
     weakness: 'Hiding from it will cause it to move very slowly.',
     evidence: [
-        'emf5',
-        'fingerprints',
+        'ghost_orbs',
+        'freezing_temps',
         'ghost_writing'
     ]
 });
@@ -95,7 +95,7 @@ Core.addGhost('shade', {
     weakness: 'Will not hunt if there are multiple people nearby.',
     evidence: [
         'emf5',
-        'ghost_orbs',
+        'freezing_temps',
         'ghost_writing'
     ]
 });
@@ -105,7 +105,7 @@ Core.addGhost('demon', {
     uniqueStrength: 'Will attack more often than any other ghost.',
     weakness: 'Asking successful questions on the Ouija Board will not lower the users sanity.',
     evidence: [
-        'spirit_box',
+        'fingerprints',
         'ghost_writing',
         'freezing_temps'
     ]
@@ -117,7 +117,7 @@ Core.addGhost('yurei', {
     weakness: 'Smudging its room will cause it to not wonder around the location for a long time.',
     evidence: [
         'ghost_orbs',
-        'ghost_writing',
+        'dots_projector',
         'freezing_temps'
     ]
 });
@@ -128,8 +128,8 @@ Core.addGhost('oni', {
     weakness: 'Being more active will make it easier to find.',
     evidence: [
         'emf5',
-        'spirit_box',
-        'ghost_writing'
+        'freezing_temps',
+        'dots_projector'
     ]
 });
 Core.addGhost('yokai', {
@@ -140,7 +140,7 @@ Core.addGhost('yokai', {
     evidence: [
         'ghost_orbs',
         'spirit_box',
-        'ghost_writing'
+        'dots_projector'
     ]
 });
 Core.addGhost('hantu', {
@@ -150,6 +150,28 @@ Core.addGhost('hantu', {
     weakness: 'Hantu moves slower in warmer areas.',
     evidence: [
         'ghost_orbs',
+        'fingerprints',
+        'freezing_temps'
+    ]
+});
+Core.addGhost('goryo', {
+    name: 'Goryo',
+    description: '',
+    uniqueStrength: 'A Goryi will usually only show itself on camera if there are no people nearby.',
+    weakness: 'They are rarely seen far from their place of death.',
+    evidence: [
+        'emf5',
+        'fingerprints',
+        'dots_projector'
+    ]
+});
+Core.addGhost('myling', {
+    name: 'Myling',
+    description: '',
+    uniqueStrength: 'A Myling is known to be quieter when hunting.',
+    weakness: 'Mylings more frequently make paranormal sounds.',
+    evidence: [
+        'em5',
         'fingerprints',
         'ghost_writing'
     ]
