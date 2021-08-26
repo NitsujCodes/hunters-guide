@@ -30,3 +30,8 @@ Core.addEvidence('freezing_temps', {
     badgeClass: 'badge-info',
     iconClass: 'fa fa-temperature-low'
 });
+Core.addEvidence('dots_projector', {
+    name: 'DOTS Projector',
+    badgeClass: 'badge-success',
+    iconClass: 'fa fa-braille'
+});
