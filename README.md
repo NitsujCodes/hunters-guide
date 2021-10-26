@@ -1,3 +1,5 @@
+# This is now obsolete due to the recent nightmare update. The devs finally improved their in-game journal from trash to useful.
+
 ## Hunters Guide
 
 The aim for this project is to provide an organised way to investigate ghosts in the game Phasmophobia. It will teach you the basic process that you should follow to be an efficient ghost hunter, along with useful tactics to help eliminate some evidence/ghosts for when the ghost is proving to be quite hesitant in giving away its identity.
